@@ -10,3 +10,12 @@
 - Enable a hidden testing feature that skips the main menu and immediately loads the last save file.
 - Open and edit JSON config files for mods.
 - Mod Sorting (For now this just sorts alphanumerically with local/dev folder mods at the top)
+
+## Upcoming Features
+- Support for a "ModLauncher.json" file that allows mods to provide additional data for ONI Mod Launcher.
+- Auto-detecting config files more intelligently
+- Auto-updates from GitHub for non-Workshop mods.
+
+## License
+I have not decided on a license yet but you are free to download the source and compile for your own personal use.
+Until I have chosen a license please do not redistribute this application in either source or binary form.

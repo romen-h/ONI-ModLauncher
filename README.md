@@ -13,7 +13,7 @@
 - Enable Debug Mode with a simple checkbox.
 - Enable a hidden testing feature that skips the main menu and immediately loads the last save file.
 - Open and edit JSON config files for mods.
-- Mod Sorting (For now this just sorts alphanumerically with local/dev folder mods at the top)
+- Mod Sorting (For now this just sorts by steam ID with local/dev folder mods at the top)
 
 ## Upcoming Features
 - Support for a "ModLauncher.json" file that allows mods to provide additional data for ONI Mod Launcher.

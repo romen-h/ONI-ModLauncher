@@ -3,6 +3,10 @@
 
 <img src="doc/Screenshot.png"/>
 
+## System Requirements
+- 64-bit Windows
+- .NET 5.0
+
 ## Features
 - Organize your mod list outside of the game with the ability to save and load backups of your mod list.
 - Toggle between Vanilla and DLC outside of the game.

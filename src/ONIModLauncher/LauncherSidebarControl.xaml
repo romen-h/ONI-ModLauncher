@@ -1,0 +1,51 @@
+﻿<UserControl x:Class="ONIModLauncher.LauncherSidebarControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ONIModLauncher"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="300">
+    <StackPanel>
+        <Button x:Name="launchButton" Margin="0,0,0,10" Height="82"
+                Style="{StaticResource PinkButton}" FontSize="40"
+                IsEnabled="{Binding Path=CanLaunch}"
+                Click="launchButton_Click">
+            <StackPanel Orientation="Horizontal">
+                <Image Width="50" Margin="10,5" Source="/Assets/launch.png"/>
+                <TextBlock VerticalAlignment="Center">Launch</TextBlock>
+                <Image Width="50"/>
+            </StackPanel>
+        </Button>
+        <CheckBox x:Name="baseGameCheckbox" Padding="20,5,0,5"
+                              IsEnabled="False"
+                              IsChecked="{Binding Path=IsGameInstalled, Mode=OneWay}">
+            <Border BorderThickness="1" BorderBrush="Black">
+                <Image Source="/Assets/vanilla.jpg" Height="50"/>
+            </Border>
+        </CheckBox>
+        <CheckBox x:Name="dlc1Checkbox" Padding="20,5,0,5"
+                              IsEnabled="{Binding Path=HasDLC1, Mode=OneWay}"
+                              IsChecked="{Binding Path=PlayerPrefs.DLC1Enabled}">
+            <Border BorderThickness="1" BorderBrush="Black">
+                <Image Source="/Assets/dlc1.jpg" Height="50"/>
+            </Border>
+        </CheckBox>
+        <CheckBox x:Name="debugModeCheckbox" Padding="20,5,0,5" Height="62"
+                              IsChecked="{Binding Path=Debug.EnableDebug}">Debug Mode</CheckBox>
+        <Grid>
+            <CheckBox x:Name="loadLastSaveCheckbox" Padding="20,5,0,5" Height="62"
+                              IsChecked="{Binding Path=Debug.AutoResumeLastSave}">Load Last Save</CheckBox>
+            <Button x:Name="pickSaveButton" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="10"
+                                IsEnabled="{Binding Path=Debug.AutoResumeLastSave}"
+                                Style="{StaticResource BlueButton}" FontSize="10"
+                                Click="pickSaveButton_Click">Select Save</Button>
+        </Grid>
+        <Button x:Name="modFolderButton" Margin="0,10,0,0" Height="50"
+                            Style="{StaticResource BlueButton}" FontSize="20"
+                            Click="modFolderButton_Click">&#x1F4C1; Open Mods Folder</Button>
+        <Button x:Name="gameLogButton" Margin="0,10,0,0" Height="50"
+                            Style="{StaticResource BlueButton}" FontSize="20"
+                            Click="gameLogButton_Click">&#x1F4C3; Open Game Log</Button>
+    </StackPanel>
+</UserControl>

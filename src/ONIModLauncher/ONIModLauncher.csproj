@@ -1,0 +1,64 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Authors>RomenH</Authors>
+    <Company />
+    <Product>ONI Mod Launcher</Product>
+    <Description>A mod manager and launcher for Oxygen Not Included.</Description>
+    <PackageProjectUrl>https://github.com/romen-h/ONI-ModLauncher</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/romen-h/ONI-ModLauncher</RepositoryUrl>
+    <Version>0.1.0</Version>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <StartupObject>ONIModLauncher.App</StartupObject>
+    <RootNamespace>ONIModLauncher</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\dlc1.jpg" />
+    <None Remove="Assets\dragger.png" />
+    <None Remove="Assets\DroidSans.ttf" />
+    <None Remove="Assets\GRAYSTROKE REGULAR.otf" />
+    <None Remove="Assets\vanilla.jpg" />
+    <None Remove="Assets\workshop_banner.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="gong-wpf-dragdrop" Version="2.4.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="YamlDotNet" Version="11.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="App.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\dlc1.jpg" />
+    <Resource Include="Assets\dragger.png" />
+    <Resource Include="Assets\DroidSans.ttf" />
+    <Resource Include="Assets\GRAYSTROKE REGULAR.otf" />
+    <Resource Include="Assets\vanilla.jpg" />
+    <Resource Include="Assets\launch.png" />
+    <Resource Include="Assets\workshop_banner.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Settings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -4,7 +4,7 @@
 <img src="doc/Screenshot.png"/>
 
 ## Features
-- Organize your mod list outside of the game with the ability to save and load backups of your mod lists.
+- Organize your mod list outside of the game with the ability to save and load backups of your mod list.
 - Toggle between Vanilla and DLC outside of the game.
 - Enable Debug Mode with a simple checkbox.
 - Enable a hidden testing feature that skips the main menu and immediately loads the last save file.

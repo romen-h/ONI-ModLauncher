@@ -18,34 +18,36 @@
             </StackPanel>
         </Button>
         <CheckBox x:Name="baseGameCheckbox" Padding="20,5,0,5"
-                              IsEnabled="False"
-                              IsChecked="{Binding Path=IsGameInstalled, Mode=OneWay}">
+                  IsEnabled="False"
+                  IsChecked="{Binding Path=HasBaseGame, Mode=OneWay}">
             <Border BorderThickness="1" BorderBrush="Black">
                 <Image Source="/Assets/vanilla.jpg" Height="50"/>
             </Border>
         </CheckBox>
         <CheckBox x:Name="dlc1Checkbox" Padding="20,5,0,5"
-                              IsEnabled="{Binding Path=HasDLC1, Mode=OneWay}"
-                              IsChecked="{Binding Path=PlayerPrefs.DLC1Enabled}">
+                  IsEnabled="{Binding Path=CanToggleDLC1}"
+                  IsChecked="{Binding Path=PlayerPrefs.DLC1Enabled}">
             <Border BorderThickness="1" BorderBrush="Black">
                 <Image Source="/Assets/dlc1.jpg" Height="50"/>
             </Border>
         </CheckBox>
         <CheckBox x:Name="debugModeCheckbox" Padding="20,5,0,5" Height="62"
-                              IsChecked="{Binding Path=Debug.EnableDebug}">Debug Mode</CheckBox>
+                  IsEnabled="{Binding Path=IsNotRunning}"
+                  IsChecked="{Binding Path=Debug.EnableDebug}">Debug Mode</CheckBox>
         <Grid>
             <CheckBox x:Name="loadLastSaveCheckbox" Padding="20,5,0,5" Height="62"
+                      IsEnabled="{Binding Path=IsNotRunning}"
                               IsChecked="{Binding Path=Debug.AutoResumeLastSave}">Load Last Save</CheckBox>
             <Button x:Name="pickSaveButton" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="10"
-                                IsEnabled="{Binding Path=Debug.AutoResumeLastSave}"
-                                Style="{StaticResource BlueButton}" FontSize="10"
-                                Click="pickSaveButton_Click">Select Save</Button>
+                    IsEnabled="{Binding Path=CanEditLastSave}"
+                    Style="{StaticResource BlueButton}" FontSize="10"
+                    Click="pickSaveButton_Click">Select Save</Button>
         </Grid>
         <Button x:Name="modFolderButton" Margin="0,10,0,0" Height="50"
-                            Style="{StaticResource BlueButton}" FontSize="20"
-                            Click="modFolderButton_Click">&#x1F4C1; Open Mods Folder</Button>
+                Style="{StaticResource BlueButton}" FontSize="20"
+                Click="modFolderButton_Click">&#x1F4C1; Open Mods Folder</Button>
         <Button x:Name="gameLogButton" Margin="0,10,0,0" Height="50"
-                            Style="{StaticResource BlueButton}" FontSize="20"
-                            Click="gameLogButton_Click">&#x1F4C3; Open Game Log</Button>
+                Style="{StaticResource BlueButton}" FontSize="20"
+                Click="gameLogButton_Click">&#x1F4C3; Open Game Log</Button>
     </StackPanel>
 </UserControl>

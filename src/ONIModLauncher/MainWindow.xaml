@@ -77,6 +77,10 @@
 
                 <local:ModListControl x:Name="modsList" Grid.Column="1" Margin="20,0,0,0"/>
             </Grid>
+
+            <Rectangle Grid.Row="1" Width="5" Height="5" Fill="{StaticResource LightBlueBrush}" Margin="3" IsHitTestVisible="True"
+                    HorizontalAlignment="Right" VerticalAlignment="Top"
+                    ToolTip="SUPER ULTRA IMPORTANT SECRET SPECIAL TOOLTIP FOR AKI! Sorry this can't make any frost buns or call you beautiful."/>
         </Grid>
     </Border>
 </Window>

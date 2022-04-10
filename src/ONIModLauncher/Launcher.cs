@@ -8,6 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
+using ONIModLauncher.Configs;
+
 namespace ONIModLauncher
 {
 	public class Launcher : INotifyPropertyChanged
@@ -25,10 +27,24 @@ namespace ONIModLauncher
 
 		private Process process = null;
 
-		public bool CanLaunch => !IsRunning && GamePaths.GameExecutablePath != null;
+		public bool HasBaseGame => GamePaths.GameExecutablePath != null;
+
+		public bool CanLaunch => HasBaseGame && !IsRunning;
+
+		public bool CanToggleDLC1 => GamePaths.HasDLC1 && !IsRunning;
+
+		public bool CanEditLastSave => !IsRunning && DebugPrefs.AutoResumeLastSave;
 
 		public bool IsRunning
 		{ get; private set; } = false;
+
+		public bool IsNotRunning => !IsRunning;
+
+		public KPlayerPrefsYaml PlayerPrefs
+		{ get; private set; }
+
+		public DebugSettingsYaml DebugPrefs
+		{ get; private set; }
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		private void InvokePropertyChanged(string propertyName)
@@ -44,6 +60,14 @@ namespace ONIModLauncher
 			gameMonitor.DoWork += GameMonitor_DoWork;
 			gameMonitor.RunWorkerCompleted += GameMonitor_RunWorkerCompleted;
 			gameMonitor.WorkerSupportsCancellation = true;
+
+			LoadLaunchConfigs();
+		}
+
+		public void LoadLaunchConfigs()
+		{
+			PlayerPrefs = KPlayerPrefsYaml.Load(GamePaths.PlayerPrefsFile);
+			DebugPrefs = DebugSettingsYaml.Load(GamePaths.DebugSettingsFile);
 		}
 
 		public void StartGameMonitor()
@@ -76,6 +100,7 @@ namespace ONIModLauncher
 
 						process = processes[0];
 						IsRunning = true;
+						OnLaunched();
 						InvokePropertyChanged(null);
 					}
 				}
@@ -87,6 +112,7 @@ namespace ONIModLauncher
 						process.Dispose();
 						process = null;
 						IsRunning = false;
+						OnExited();
 						InvokePropertyChanged(null);
 					}
 				}
@@ -96,6 +122,17 @@ namespace ONIModLauncher
 
 		private void GameMonitor_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{ }
+
+		private void OnLaunched()
+		{
+
+		}
+
+		private void OnExited()
+		{
+			ModManager.Instance.LoadModList(GamePaths.ModsConfigFile);
+			LoadLaunchConfigs();
+		}
 
 		public void Launch()
 		{
@@ -113,6 +150,10 @@ namespace ONIModLauncher
 					if (process == null)
 					{
 						MessageBox.Show($"{GamePaths.ONI_EXE_NAME} did not start. (Unknown Reason)", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+					}
+					else
+					{
+						OnLaunched();
 					}
 				}
 			}

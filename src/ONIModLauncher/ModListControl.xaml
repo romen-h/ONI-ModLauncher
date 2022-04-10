@@ -138,5 +138,11 @@
             <Button x:Name="sortModsButton" Margin="10,10,0,0" Width="100" Height="30" FontSize="16" Style="{StaticResource BlueButton}"
                                 Click="sortModsButton_Click">Sort Mods</Button>
         </StackPanel>
+
+        <Border x:Name="modListLockScreen" Grid.RowSpan="2" Background="Black" Opacity="0.9">
+            <Label HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Foreground="White"
+                   FontSize="20" FontFamily="{StaticResource ONIFont}">Mod list cannot be changed while the game is running.</Label>
+        </Border>
     </Grid>
 </UserControl>

@@ -25,6 +25,23 @@ namespace ONIModLauncher
 		public ModListControl()
 		{
 			InitializeComponent();
+
+			Launcher.Instance.PropertyChanged += Launcher_PropertyChanged;
+
+			IsEnabled = Launcher.Instance.IsNotRunning;
+			modListLockScreen.Visibility = Visibility.Collapsed;
+		}
+
+		private void Launcher_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if (!Dispatcher.CheckAccess())
+			{
+				Dispatcher.Invoke(() => Launcher_PropertyChanged(sender, e));
+				return;
+			}
+
+			IsEnabled = Launcher.Instance.IsNotRunning;
+			modListLockScreen.Visibility = Launcher.Instance.IsNotRunning ? Visibility.Collapsed : Visibility.Visible;
 		}
 
 		private void refreshModsButton_Click(object sender, RoutedEventArgs e)

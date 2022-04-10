@@ -36,8 +36,7 @@ namespace ONIModLauncher
 			if (GamePaths.Init())
 			{
 				Launcher.Instance.StartGameMonitor();
-				sideBar.DataContext = LaunchSettings.Instance;
-				sideBar.launchButton.DataContext = Launcher.Instance;
+				sideBar.DataContext = Launcher.Instance;
 				modsList.DataContext = ModManager.Instance;
 			}
 			else

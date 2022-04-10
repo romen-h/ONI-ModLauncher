@@ -47,7 +47,7 @@ namespace ONIModLauncher
 
 			if (dlg.ShowDialog() == true)
 			{
-				LaunchSettings.Instance.PlayerPrefs.SaveFile = dlg.FileName;
+				Launcher.Instance.PlayerPrefs.SaveFile = dlg.FileName;
 			}
 		}
 

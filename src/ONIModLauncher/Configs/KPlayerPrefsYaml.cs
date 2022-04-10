@@ -13,6 +13,7 @@ namespace ONIModLauncher.Configs
 {
 	public class KPlayerPrefsYaml : ConfigBase
 	{
+		private const string PlayShortOnLaunchKey = @"PlayShortOnLaunch";
 		private const string SaveFilenameKey = @"SaveFilenameKey/";
 
 		private const string ResolutionWidthKey = @"ResolutionWidth";
@@ -25,13 +26,10 @@ namespace ONIModLauncher.Configs
 
 		private string filePath;
 
-		[YamlMember(Alias = "strings")]
 		public Dictionary<string, string> strings = new Dictionary<string, string>();
 
-		[YamlMember(Alias = "ints")]
 		public Dictionary<string, int> ints = new Dictionary<string, int>();
 
-		[YamlMember(Alias = "floats")]
 		public Dictionary<string, float> floats = new Dictionary<string, float>();
 
 		[YamlIgnore]
@@ -106,6 +104,7 @@ namespace ONIModLauncher.Configs
 			}
 		}
 
+		[YamlIgnore]
 		public float UIScale
 		{
 			get => floats.ContainsKey(UIScalePrefKey) ? floats[UIScalePrefKey] : float.NaN;
@@ -119,6 +118,10 @@ namespace ONIModLauncher.Configs
 
 		public KPlayerPrefsYaml()
 		{
+			if (GamePaths.HasDLC1)
+			{
+				strings[PlayShortOnLaunchKey] = @"intro\Spaced_Out_Intro";
+			}
 			SaveFile = "";
 			ResolutionWidth = 1920;
 			ResolutionHeight = 1080;

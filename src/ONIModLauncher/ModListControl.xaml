@@ -6,7 +6,8 @@
              xmlns:local="clr-namespace:ONIModLauncher"
              xmlns:dd="urn:gong-wpf-dragdrop"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             Loaded="UserControl_Loaded">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -132,11 +133,13 @@
         </Border>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <Button x:Name="selectAllModsButton" Margin="0,10,0,0" Width="100" Height="30" FontSize="16" Style="{StaticResource BlueButton}"
-                                Click="selectAllModsButton_Click">Enable All</Button>
+                    Click="selectAllModsButton_Click">Enable All</Button>
             <Button x:Name="unselectAllModsButton" Margin="10,10,0,0" Width="100" Height="30" FontSize="16" Style="{StaticResource BlueButton}"
-                                Click="unselectAllModsButton_Click">Disable All</Button>
-            <Button x:Name="sortModsButton" Margin="10,10,0,0" Width="100" Height="30" FontSize="16" Style="{StaticResource BlueButton}"
-                                Click="sortModsButton_Click">Sort Mods</Button>
+                    Click="unselectAllModsButton_Click">Disable All</Button>
+            <Button x:Name="sortModsButton" Margin="10,10,0,0" Width="100" Height="30"
+                    FontSize="16" Style="{StaticResource BlueButton}"
+                    ToolTip="This re-orders the mods to put dev and local folder mods at the top of the list and then all workshop mods sorted by their workshop ID."
+                    Click="sortModsButton_Click">Sort Mods</Button>
         </StackPanel>
 
         <Border x:Name="modListLockScreen" Grid.RowSpan="2" Background="Black" Opacity="0.9">

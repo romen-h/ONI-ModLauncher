@@ -25,7 +25,10 @@ namespace ONIModLauncher
 		public ModListControl()
 		{
 			InitializeComponent();
+		}
 
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
 			Launcher.Instance.PropertyChanged += Launcher_PropertyChanged;
 
 			IsEnabled = Launcher.Instance.IsNotRunning;
@@ -82,5 +85,7 @@ namespace ONIModLauncher
 				ModManager.Instance.LoadModList(dlg.FileName);
 			}
 		}
+
+		
 	}
 }

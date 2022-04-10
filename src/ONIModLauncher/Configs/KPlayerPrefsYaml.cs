@@ -26,11 +26,17 @@ namespace ONIModLauncher.Configs
 
 		private string filePath;
 
-		public Dictionary<string, string> strings = new Dictionary<string, string>();
+		[YamlMember]
+		public Dictionary<string, string> strings
+		{ get; set; } = new Dictionary<string, string>();
 
-		public Dictionary<string, int> ints = new Dictionary<string, int>();
+		[YamlMember]
+		public Dictionary<string, int> ints
+		{ get; set; } = new Dictionary<string, int>();
 
-		public Dictionary<string, float> floats = new Dictionary<string, float>();
+		[YamlMember]
+		public Dictionary<string, float> floats
+		{ get; set; } = new Dictionary<string, float>();
 
 		[YamlIgnore]
 		public string SaveFile
@@ -146,14 +152,16 @@ namespace ONIModLauncher.Configs
 			return s;
 		}
 
+		private static readonly UTF8Encoding encoding = new UTF8Encoding(false);
+
 		public void Save()
 		{
 			if (filePath == null) return;
 
-			var serializer = new SerializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
+			var serializer = new SerializerBuilder().Build();
 			string yaml = serializer.Serialize(this);
 
-			File.WriteAllText(filePath, yaml, Encoding.UTF8);
+			File.WriteAllText(filePath, yaml, encoding);
 		}
 	}
 }

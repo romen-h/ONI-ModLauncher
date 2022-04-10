@@ -33,11 +33,11 @@
         </CheckBox>
         <CheckBox x:Name="debugModeCheckbox" Padding="20,5,0,5" Height="62"
                   IsEnabled="{Binding Path=IsNotRunning}"
-                  IsChecked="{Binding Path=Debug.EnableDebug}">Debug Mode</CheckBox>
+                  IsChecked="{Binding Path=DebugPrefs.EnableDebug}">Debug Mode</CheckBox>
         <Grid>
             <CheckBox x:Name="loadLastSaveCheckbox" Padding="20,5,0,5" Height="62"
                       IsEnabled="{Binding Path=IsNotRunning}"
-                              IsChecked="{Binding Path=Debug.AutoResumeLastSave}">Load Last Save</CheckBox>
+                              IsChecked="{Binding Path=DebugPrefs.AutoResumeLastSave}">Load Last Save</CheckBox>
             <Button x:Name="pickSaveButton" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="10"
                     IsEnabled="{Binding Path=CanEditLastSave}"
                     Style="{StaticResource BlueButton}" FontSize="10"

@@ -16,13 +16,13 @@ namespace ONIModLauncher.Configs
 		[YamlIgnore]
 		private string filePath;
 
-		[YamlMember(Alias = "debugEnable")]
+		[YamlMember]
 		public bool debugEnable;
 
-		[YamlMember(Alias = "developerDebugEnable")]
+		[YamlMember]
 		public bool developerDebugEnable;
 
-		[YamlMember(Alias = "autoResumeGame")]
+		[YamlMember]
 		public bool autoResumeGame;
 
 		[YamlIgnore]
@@ -79,7 +79,7 @@ namespace ONIModLauncher.Configs
 		{
 			if (filePath == null) return;
 
-			var serializer = new SerializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
+			var serializer = new SerializerBuilder().Build();
 			string yaml = serializer.Serialize(this);
 
 			File.WriteAllText(filePath, yaml);

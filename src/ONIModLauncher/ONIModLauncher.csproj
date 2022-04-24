@@ -11,7 +11,7 @@
     <Description>A mod manager and launcher for Oxygen Not Included.</Description>
     <PackageProjectUrl>https://github.com/romen-h/ONI-ModLauncher</PackageProjectUrl>
     <RepositoryUrl>https://github.com/romen-h/ONI-ModLauncher</RepositoryUrl>
-    <Version>0.4.1</Version>
+    <Version>0.5.0</Version>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
     <StartupObject>ONIModLauncher.App</StartupObject>
     <RootNamespace>ONIModLauncher</RootNamespace>

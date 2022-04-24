@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -33,6 +34,8 @@ namespace ONIModLauncher
 		public ObservableCollection<ONIMod> Mods
 		{ get; private set; }
 
+		private SynchronizationContext ctx;
+
 		private ModManager()
 		{
 			//configWatcher = new FileSystemWatcher(GamePaths.ModsFolder);
@@ -40,33 +43,41 @@ namespace ONIModLauncher
 			Mods = new ObservableCollection<ONIMod>();
 			Mods.CollectionChanged += Mods_CollectionChanged;
 
+			ctx = SynchronizationContext.Current;
+
 			LoadModList(GamePaths.ModsConfigFile);
 		}
 
 		public void LoadModList(string path)
 		{
-			autoSaveDisabled = true;
-			try
+			ctx.Post((state) =>
 			{
-				Mods.Clear();
-
-				modConfig = ModConfigJson.Load(path);
-
-				foreach(var mod in modConfig.mods)
+				autoSaveDisabled = true;
+				try
 				{
-					try
+
+					Mods.Clear();
+
+					modConfig = ModConfigJson.Load(path);
+
+					foreach (var mod in modConfig.mods)
 					{
-						AddMod(mod);
-					}
-					catch (Exception ex)
-					{
-						//Debug.Fail(ex.ToString());
+						try
+						{
+							AddMod(mod);
+						}
+						catch (Exception ex)
+						{
+							//Debug.Fail(ex.ToString());
+						}
 					}
 				}
-			}
-			catch
-			{ }
-			autoSaveDisabled = false;
+				catch (Exception ex)
+				{
+					Debug.WriteLine(ex.ToString());
+				}
+				autoSaveDisabled = false;
+			}, null);
 		}
 
 		private void AddMod(ModConfigItem modListItem)
@@ -265,8 +276,7 @@ namespace ONIModLauncher
 					}
 				}
 
-				string json = JsonConvert.SerializeObject(modConfig, Formatting.Indented);
-				File.WriteAllText(path, json);
+				ModConfigJson.Save(modConfig, path);
 			}
 			catch (Exception ex)
 			{

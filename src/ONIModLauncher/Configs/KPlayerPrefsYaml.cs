@@ -26,6 +26,8 @@ namespace ONIModLauncher.Configs
 
 		private string filePath;
 
+		private bool configured = false;
+
 		[YamlMember]
 		public Dictionary<string, string> strings
 		{ get; set; } = new Dictionary<string, string>();
@@ -134,6 +136,8 @@ namespace ONIModLauncher.Configs
 			RefreshRate = 60;
 			FullScreen = true;
 			DLC1Enabled = false;
+
+			configured = true;
 		}
 
 		public static KPlayerPrefsYaml Load(string file)
@@ -156,6 +160,7 @@ namespace ONIModLauncher.Configs
 
 		public void Save()
 		{
+			if (!configured) return;
 			if (filePath == null) return;
 
 			var serializer = new SerializerBuilder().Build();

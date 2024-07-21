@@ -11,6 +11,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+            <local:InverseBooleanToVisibilityConverter x:Key="InvBoolToVis"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

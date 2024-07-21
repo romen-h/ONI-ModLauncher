@@ -14,14 +14,14 @@ namespace ONIModLauncher
 {
 	public class Launcher : INotifyPropertyChanged
 	{
-		private static Launcher _instance;
+		private static Launcher s_instance;
 
 		public static Launcher Instance
 		{
 			get
 			{
-				if (_instance == null) _instance = new Launcher();
-				return _instance;
+				if (s_instance == null) s_instance = new Launcher();
+				return s_instance;
 			}
 		}
 
@@ -32,6 +32,8 @@ namespace ONIModLauncher
 		public bool CanLaunch => HasBaseGame && !IsRunning;
 
 		public bool CanToggleDLC1 => GamePaths.HasDLC1 && !IsRunning;
+
+		public bool HasDLC2 => GamePaths.HasDLC2 && !IsRunning;
 
 		public bool CanEditLastSave => !IsRunning && DebugPrefs.AutoResumeLastSave;
 
@@ -51,6 +53,10 @@ namespace ONIModLauncher
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
+
+		public event EventHandler GameStarted;
+
+		public event EventHandler GameStopped;
 
 		private BackgroundWorker gameMonitor;
 
@@ -125,13 +131,15 @@ namespace ONIModLauncher
 
 		private void OnLaunched()
 		{
-
+			GameStarted?.Invoke(this, EventArgs.Empty);
 		}
 
 		private void OnExited()
 		{
-			ModManager.Instance.LoadModList(GamePaths.ModsConfigFile);
+			ModManager.Instance.LoadModList();
 			LoadLaunchConfigs();
+
+			GameStopped?.Invoke(this, EventArgs.Empty);
 		}
 
 		public void Launch()
@@ -140,9 +148,9 @@ namespace ONIModLauncher
 
 			try
 			{
-				if (GamePaths.UseSteam)
+				if (SteamIntegration.Instance.UseSteam)
 				{
-					LaunchSteam();
+					SteamIntegration.Instance.LaunchGame();
 				}
 				else
 				{
@@ -172,20 +180,6 @@ namespace ONIModLauncher
 			};
 
 			return Process.Start(startInfo);
-		}
-
-		private void LaunchSteam()
-		{
-			var startInfo = new ProcessStartInfo()
-			{
-				FileName = GamePaths.SteamExecutablePath,
-				Arguments = $"-applaunch {GamePaths.STEAM_APP_ID}",
-				WindowStyle = ProcessWindowStyle.Hidden,
-				UseShellExecute = false,
-				CreateNoWindow = true
-			};
-
-			Process.Start(startInfo);
 		}
 	}
 }

@@ -29,9 +29,16 @@ namespace ONIModLauncher
 			InitializeComponent();
 		}
 
+		private void LauncherSidebarControl_OnLoaded(object sender, RoutedEventArgs e)
+		{
+#if ENABLE_WORKSHOP
+			modBrowserButton.Visibility = SteamIntegration.Instance.UseSteam ? Visibility.Visible : Visibility.Collapsed;
+#endif
+		}
+
 		private void launchButton_Click(object sender, RoutedEventArgs e)
 		{
-			ModManager.Instance.SaveModList(GamePaths.ModsConfigFile);
+			ModManager.Instance.SaveModList();
 
 			Launcher.Instance.Launch();
 		}
@@ -66,6 +73,11 @@ namespace ONIModLauncher
 			{
 				ShellHelper.OpenTextFile(GamePaths.GameLogFile);
 			}
+		}
+
+		private void ModBrowserButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			ModBrowserWindow.Instance.Show();
 		}
 	}
 }

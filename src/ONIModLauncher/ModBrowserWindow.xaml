@@ -1,0 +1,90 @@
+﻿<Window x:Class="ONIModLauncher.ModBrowserWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ONIModLauncher"
+        xmlns:wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        mc:Ignorable="d"
+        Title="ModBrowserWindow" Height="1024" Width="1280">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="40" ResizeBorderThickness="4"/>
+    </WindowChrome.WindowChrome>
+
+    <Border x:Name="winBorder" BorderBrush="Black" BorderThickness="1" Background="{StaticResource DarkBlueBrush}">
+        <Border.Style>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="Margin" Value="0" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=WindowState}" Value="Maximized">
+                        <Setter Property="Margin" Value="7"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" HorizontalAlignment="Stretch" Background="{StaticResource PinkBrush}">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Padding="20" VerticalAlignment="Center" Foreground="White"
+                           FontSize="30" FontFamily="{StaticResource ONIFont}" Text="{Binding ElementName=window, Path=Title}"/>
+                <Button x:Name="minimizeButton" Grid.Column="1" Margin="5" Width="30" Height="30"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        Style="{StaticResource BlueButton}"
+                    Click="minimizeButton_Click">⎽⎽⎽</Button>
+                <Button x:Name="maximizeButton" Grid.Column="2" Margin="5" Width="30" Height="30"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        Style="{StaticResource BlueButton}"
+                    Click="maximizeButton_Click">▭</Button>
+                <Button x:Name="closeButton" Grid.Column="3" Margin="5" Width="30" Height="30"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        Style="{StaticResource BlueButton}"
+                    Click="closeButton_Click">✕</Button>
+            </Grid>
+
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="browseBackBtn" Width="30" Height="30" Margin="5"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        Style="{StaticResource BlueButton}"
+                        Content="&#x25C0;"
+                        IsEnabled="False"
+                        Click="BrowseBackBtn_OnClick"/>
+                <Button x:Name="browseForwardBtn" Width="30" Height="30" Margin="5"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        Style="{StaticResource BlueButton}"
+                        Content="&#x25B6;"
+                        IsEnabled="False"
+                        Click="BrowseForwardBtn_OnClick"/>
+                <Button x:Name="subscribeBtn" Width="100" Height="30" Margin="5"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        Content="Subscribe"
+                        Visibility="Collapsed"
+                        Click="SubscribeBtn_OnClick"/>
+                <Button x:Name="unsubscribeBtn" Width="100" Height="30" Margin="5"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        Content="Unsubscribe"
+                        Visibility="Collapsed"
+                        Click="UnsubscribeBtn_OnClick"/>
+            </StackPanel>
+
+            <Border Grid.Row="2" BorderBrush="Black" BorderThickness="1" Margin="0">
+                <wpf:WebView2 x:Name="webView"
+                              Source="https://steamcommunity.com/app/457140/workshop/"
+                              NavigationStarting="WebView_OnNavigationStarting"
+                              NavigationCompleted="WebView_OnNavigationCompleted"/>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

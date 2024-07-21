@@ -9,7 +9,7 @@
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         Title="ONI Mod Launcher"
         Width="1280" Height="800"
-        MinWidth="1280" MinHeight="720"
+        MinWidth="1280" MinHeight="800"
         FontFamily="{StaticResource DroidSansFont}" Foreground="White"
         MaxWidth="{Binding Source={x:Static SystemParameters.WorkArea}, Path=Width}"
         MaxHeight="{Binding Source={x:Static SystemParameters.WorkArea}, Path=Height}"
@@ -20,7 +20,7 @@
 
     <Window.Resources>
         <Style TargetType="{x:Type Panel}" x:Key="WindowMainPanelStyle">
-            <Setter Property="Margin" Value="0" />
+            <Setter Property="Margin" Value="5" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=WindowState}" Value="Maximized">
                     <Setter Property="Margin" Value="7"/>

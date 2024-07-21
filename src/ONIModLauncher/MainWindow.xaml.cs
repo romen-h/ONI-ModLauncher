@@ -33,11 +33,15 @@ namespace ONIModLauncher
 
 		private void window_Loaded(object sender, RoutedEventArgs e)
 		{
+			AppSettings.Init();
+			SteamIntegration.Instance.Init();
+
 			if (GamePaths.Init())
 			{
 				Launcher.Instance.StartGameMonitor();
 				sideBar.DataContext = Launcher.Instance;
 				modsList.DataContext = ModManager.Instance;
+				modsList.SetupFilters();
 			}
 			else
 			{
@@ -47,7 +51,10 @@ namespace ONIModLauncher
 
 		private void window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
+			ModBrowserWindow.Instance.Shutdown = true;
+			ModBrowserWindow.Instance.Close();
 			Launcher.Instance.StopGameMonitor();
+			AppSettings.Save();
 		}
 
 		private void minimizeButton_Click(object sender, RoutedEventArgs e)

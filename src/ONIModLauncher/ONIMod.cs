@@ -12,6 +12,14 @@ namespace ONIModLauncher
 {
 	public class ONIMod : INotifyPropertyChanged
 	{
+		private static readonly Dictionary<string, string> s_SortingBiases = new Dictionary<string, string>()
+		{
+			{ "2018291283", "0000" }, // Mod Updater
+			{ "2854869130", "0001" }, // Mod Profile Manager
+			{ "3281716506", "0002" }, // Mod Preset Manager
+			{ "1967921388", "0003" }, // Stock Bug Fix
+		};
+
 		public event PropertyChangedEventHandler PropertyChanged;
 		private void InvokePropertyChanged(string name)
 		{
@@ -22,21 +30,9 @@ namespace ONIModLauncher
 		{
 			get
 			{
-				if (ID == "2018291283" || Title == "Mod Updater") // Mod Updater
+				if (s_SortingBiases.TryGetValue(ID, out string sortPrefix))
 				{
-					return ".....ModUpdater";
-				}
-				else if (Title == "Fast Track") // Fast Track
-				{
-					return "....FastTrack";
-				}
-				else if (ID == "1967921388" || Title == "Stock Bug Fix") // Stock Bug Fix
-				{
-					return "...StockBugFix";
-				}
-				else if (ID == "2692663069") // Mod Translations
-				{
-					return "###ModTranslation";
+					return $"...{sortPrefix}.{ID}";
 				}
 				else if (IsDev)
 				{
@@ -62,7 +58,16 @@ namespace ONIModLauncher
 		public string Title
 		{ get; set; }
 
-		public int Version
+		public DateTimeOffset Version
+		{ get; set; }
+
+		public string Author
+		{ get; set; }
+
+		public Uri RepoURL
+		{ get; set; }
+
+		public bool RepoIsGithub
 		{ get; set; }
 
 		public ModType Type
@@ -118,13 +123,16 @@ namespace ONIModLauncher
 			}
 		}
 
-		public ModLauncherJson LauncherData
+		public LauncherMetadataJson LauncherData
 		{ get; set; }
 
 		public ICommand OpenConfigCommand
 		{ get; private set; }
 
 		public ICommand OpenWorkshopCommand
+		{ get; private set; }
+
+		public ICommand OpenRepoCommand
 		{ get; private set; }
 
 		public ICommand OpenFolderCommand
@@ -140,6 +148,11 @@ namespace ONIModLauncher
 			OpenWorkshopCommand = new BasicActionCommand(
 				(param) => ShellHelper.OpenURL($"https://steamcommunity.com/sharedfiles/filedetails/?id={ID}"),
 				(param) => IsSteam
+			);
+
+			OpenRepoCommand = new BasicActionCommand(
+				(param) => ShellHelper.OpenURL(RepoURL.ToString()),
+				(param) => RepoURL != null
 			);
 
 			OpenFolderCommand = new BasicActionCommand(

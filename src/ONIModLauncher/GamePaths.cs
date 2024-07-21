@@ -34,9 +34,6 @@ namespace ONIModLauncher
 		[DllImport("shell32.dll")]
 		static extern int SHGetKnownFolderPath([MarshalAs(UnmanagedType.LPStruct)] Guid rfid, uint dwFlags, IntPtr hToken, out IntPtr pszPath);
 
-		private const string STEAM_EXE_NAME = "steam.exe";
-		public const string STEAM_APP_ID = "457140";
-
 		public const string ONI_EXE_NAME = "OxygenNotIncluded.exe";
 		
 		private const string ONI_DEBUG_PREFS_NAME = "settings.yml";
@@ -44,6 +41,8 @@ namespace ONIModLauncher
 		private const string ONI_MODS_CONFIG_NAME = "mods.json";
 
 		private const string DLC1_FLAG_FILE = "OxygenNotIncluded_Data\\StreamingAssets\\expansion1_bundle";
+
+		private const string DLC2_FLAG_FILE = "OxygenNotIncluded_Data\\StreamingAssets\\dlc2_bundle";
 
 		public static string GameExecutablePath
 		{ get; private set; }
@@ -60,51 +59,82 @@ namespace ONIModLauncher
 		public static bool HasDLC1
 		{ get; private set; }
 
+		public static bool HasDLC2
+		{ get; private set; }
+
+		/// <summary>
+		/// Documents/Klei/OxygenNotIncluded
+		/// </summary>
 		public static string GameDocumentsFolder
 		{ get; private set; }
 
+		/// <summary>
+		/// Documents/Klei/OxygenNotIncluded/save_files
+		/// </summary>
 		public static string SavesFolder
 		{ get; private set; }
 
+		/// <summary>
+		/// Documents/Klei/OxygenNotIncluded/kplayerprefs.yaml
+		/// </summary>
 		public static string PlayerPrefsFile
 		{ get; private set; }
 
+		/// <summary>
+		/// Documents/Klei/OxygenNotIncluded/mods/mods.json
+		/// </summary>
 		public static string ModsConfigFile
 		{ get; private set; }
 
+		/// <summary>
+		/// Documents/Klei/OxygenNotIncluded/mods
+		/// </summary>
 		public static string ModsFolder
 		{ get; private set; }
 
+		/// <summary>
+		/// Documents/Klei/OxygenNotIncluded/mods/Steam
+		/// </summary>
 		public static string SteamModsFolder
 		{ get; private set; }
 
+		/// <summary>
+		/// Documents/Klei/OxygenNotIncluded/mods/local
+		/// </summary>
 		public static string LocalModsFolder
 		{ get; private set; }
 
+		/// <summary>
+		/// Documents/Klei/OxygenNotIncluded/mods/dev
+		/// </summary>
 		public static string DevModsFolder
-		{ get; private set; }
-
-		public static bool UseSteam
-		{ get; private set; }
-
-		public static string SteamExecutablePath
 		{ get; private set; }
 
 		public static bool Init()
 		{
-			if (Settings.Default.GameExePath == null || !File.Exists(Settings.Default.GameExePath))
+			if (SteamIntegration.Instance.UseSteam)
 			{
-				OpenFileDialog dlg = new OpenFileDialog();
-				dlg.Title = $"Locate {ONI_EXE_NAME}";
-				dlg.Filter = $"{ONI_EXE_NAME}|{ONI_EXE_NAME}";
-				if (dlg.ShowDialog() == true)
+				GameExecutablePath = SteamIntegration.Instance.ONIExecutablePath;
+				AppSettings.Instance.GameExecutablePath = GameExecutablePath;
+				AppSettings.Save();
+			}
+			else
+			{
+				if (AppSettings.Instance.GameExecutablePath == null || !File.Exists(AppSettings.Instance.GameExecutablePath))
 				{
-					Settings.Default.GameExePath = dlg.FileName;
-					Settings.Default.Save();
+					OpenFileDialog dlg = new OpenFileDialog();
+					dlg.Title = $"Locate {ONI_EXE_NAME}";
+					dlg.Filter = $"{ONI_EXE_NAME}|{ONI_EXE_NAME}";
+					if (dlg.ShowDialog() == true)
+					{
+						AppSettings.Instance.GameExecutablePath = dlg.FileName;
+						AppSettings.Save();
+					}
 				}
+
+				GameExecutablePath = AppSettings.Instance.GameExecutablePath;
 			}
 
-			GameExecutablePath = Settings.Default.GameExePath;
 			GameInstallFolder = Path.GetDirectoryName(GameExecutablePath);
 			DebugSettingsFile = Path.Combine(GameInstallFolder, ONI_DEBUG_PREFS_NAME);
 
@@ -112,6 +142,9 @@ namespace ONIModLauncher
 
 			string dlc1BundleFile = Path.Combine(GameInstallFolder, DLC1_FLAG_FILE);
 			HasDLC1 = File.Exists(dlc1BundleFile);
+
+			string dlc2BundleFile = Path.Combine(GameInstallFolder, DLC2_FLAG_FILE);
+			HasDLC2 = File.Exists(dlc2BundleFile);
 
 			GameDocumentsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Klei\\OxygenNotIncluded");
 			if (!Directory.Exists(GameDocumentsFolder))
@@ -130,37 +163,16 @@ namespace ONIModLauncher
 
 			ModsConfigFile = Path.Combine(ModsFolder, ONI_MODS_CONFIG_NAME);
 
-			if (GameExecutablePath.ToLower().Contains("steamapps"))
+			if (GameExecutablePath.ToLowerInvariant().Contains("steamapps"))
 			{
-				UseSteam = true;
-				if (!FindSteamExecutable())
+				if (!SteamIntegration.Instance.UseSteam)
 				{
-					MessageBox.Show("Failed to find steam.exe", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+					MessageBox.Show($"The game is inside a steam library folder but steam could not be detected.\nReason:\n\n{SteamIntegration.Instance.InitError}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 					return false;
 				}
 			}
 
 			return true;
-		}
-
-		private static bool FindSteamExecutable()
-		{
-			try
-			{
-				using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Valve\\Steam"))
-				{
-					if (key != null)
-					{
-						string steamPath = (string)key.GetValue("InstallPath");
-						SteamExecutablePath = Path.Combine(steamPath, STEAM_EXE_NAME);
-						return true;
-					}
-				}
-			}
-			catch
-			{ }
-
-			return false;
 		}
 	}
 }

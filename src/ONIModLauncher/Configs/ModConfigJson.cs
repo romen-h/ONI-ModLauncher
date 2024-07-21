@@ -10,6 +10,23 @@ using Newtonsoft.Json;
 
 namespace ONIModLauncher.Configs
 {
+	public enum DistributionPlatform
+	{
+		Local,
+		Steam,
+		Epic,
+		Rail,
+		Dev
+	}
+
+	public enum ModStatus
+	{
+		NotInstalled,
+		Installed,
+		UninstallPending,
+		ReinstallPending
+	}
+
 	[JsonObject(MemberSerialization.Fields)]
 	public class ModConfigJson
 	{
@@ -17,10 +34,7 @@ namespace ONIModLauncher.Configs
 		public int version;
 
 		[JsonProperty("mods")]
-		public ObservableCollection<ModConfigItem> mods;
-
-		public ModConfigJson()
-		{ }
+		public ObservableCollection<ModConfigItem> mods = new ObservableCollection<ModConfigItem>();
 
 		public static ModConfigJson Load(string file)
 		{
@@ -42,26 +56,20 @@ namespace ONIModLauncher.Configs
 	public class ModConfigItem
 	{
 		public ModConfigLabel label;
-		public int status;
+		public ModStatus status;
 		public bool enabled;
 		public List<string> enabledForDlc;
 		public int crash_count;
 		public string reinstall_path;
 		public string staticID;
-
-		public ModConfigItem()
-		{ }
 	}
 
 	[JsonObject(MemberSerialization.Fields)]
 	public class ModConfigLabel
 	{
-		public int distribution_platform;
+		public DistributionPlatform distribution_platform;
 		public string id;
 		public string title;
-		public int version;
-
-		public ModConfigLabel()
-		{ }
+		public long version;
 	}
 }

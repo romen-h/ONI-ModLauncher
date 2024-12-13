@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-
+using System.Windows.Media;
 using Newtonsoft.Json;
 
 using ONIModLauncher.Configs;
@@ -282,6 +284,34 @@ namespace ONIModLauncher
 				}
 			}
 
+			try
+			{
+				if (mod.Title != null)
+				{
+					Regex findColorTags = new Regex("<color=#(......)>(.*)</color>");
+					var match = findColorTags.Match(mod.Title);
+					if (match.Success)
+					{
+						if (match.Groups.Count == 3)
+						{
+							string colorHexStr = match.Groups[1].Value;
+							byte r = byte.Parse(colorHexStr.Substring(0,2), NumberStyles.HexNumber);
+							byte g = byte.Parse(colorHexStr.Substring(2,2), NumberStyles.HexNumber);
+							byte b = byte.Parse(colorHexStr.Substring(4,2), NumberStyles.HexNumber);
+							Color color = Color.FromRgb(r, g, b);
+
+							mod.Title = match.Groups[2].Value;
+							mod.TitleColor = color;
+						}
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+				throw;
+			}
+
 			string modInfoYamlFile = Path.Combine(mod.Folder, "mod_info.yaml");
 			ModInfoYaml modInfo = ModInfoYaml.Load(modInfoYamlFile);
 
@@ -421,6 +451,40 @@ namespace ONIModLauncher
 			}
 			autoSaveDisabled = false;
 			SaveModList();
+		}
+
+		public void BisectTop()
+		{
+			int enabledModCount = Mods.Count((m) => m.EnabledForCurrentDLC);
+			int halfOfEnabledMods = (int)Math.Ceiling(enabledModCount / 2.0);
+
+			foreach (var mod in Mods.Reverse())
+			{
+				if (mod.EnabledForCurrentDLC)
+				{
+					mod.EnabledForCurrentDLC = false;
+					enabledModCount--;
+				}
+
+				if (enabledModCount <= halfOfEnabledMods) break;
+			}
+		}
+
+		public void BisectBottom()
+		{
+			int enabledModCount = Mods.Count((m) => m.EnabledForCurrentDLC);
+			int halfOfEnabledMods = (int)Math.Floor(enabledModCount / 2.0);
+
+			foreach (var mod in Mods)
+			{
+				if (mod.EnabledForCurrentDLC)
+				{
+					mod.EnabledForCurrentDLC = false;
+					enabledModCount--;
+				}
+
+				if (enabledModCount <= halfOfEnabledMods) break;
+			}
 		}
 
 		public void SaveModList() => SaveModList(GamePaths.ModsConfigFile);

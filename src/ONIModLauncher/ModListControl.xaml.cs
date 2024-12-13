@@ -109,12 +109,12 @@ namespace ONIModLauncher
 
 		private void ModTypeComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			FilterModsList();
+			searchTypingDelay.Start();
 		}
 
 		private void SearchTypingDelay_DelayFinished(object sender, EventArgs e)
 		{
-			searchTypingDelay.Start();
+			FilterModsList();
 		}
 
 		private void FilterModsList()
@@ -171,6 +171,16 @@ namespace ONIModLauncher
 				ModManager.Instance.Mods.Remove(mod);
 				ModManager.Instance.Mods.Add(mod);
 			}
+		}
+
+		private void BisectTopButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			ModManager.Instance.BisectTop();
+		}
+
+		private void BisectBottomButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			ModManager.Instance.BisectBottom();
 		}
 	}
 }

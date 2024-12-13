@@ -131,7 +131,7 @@
                                                  Visibility="Collapsed"
                                                  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                                                  FontSize="16"
-                                                 Text="{Binding LoadOrderIndex}"/>
+                                                 Text="0"/>
 
                                         <CheckBox Margin="5"
                                                   Visibility="{Binding Source={x:Static local:Launcher.Instance}, Path=PlayerPrefs.DLC1Enabled, Converter={StaticResource InvBoolToVis}, FallbackValue=Collapsed}"
@@ -145,7 +145,10 @@
                                                   IsChecked="{Binding EnabledDLC1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                   ToolTip="Enable for Spaced Out!"/>
 
-                                        <Label Margin="10,0,0,0" FontFamily="{StaticResource ONIFont}" FontSize="18" TextOptions.TextFormattingMode="Display" Foreground="White" VerticalAlignment="Center" Content="{Binding Path=Title}"/>
+                                        <TextBlock x:Name="titleText" Margin="10,0,0,0" VerticalAlignment="Center"
+                                                   FontFamily="{StaticResource ONIFont}" FontSize="18" TextOptions.TextFormattingMode="Display"
+                                                   Foreground="{Binding TitleColor, Converter={StaticResource ColorToBrush}}"
+                                                   Text="{Binding Path=Title}"/>
                                         <Label Foreground="White" VerticalAlignment="Center" Visibility="{Binding IsLocal, Mode=OneWay, Converter={StaticResource BoolToVis}}">(local)</Label>
                                         <Label Foreground="White" VerticalAlignment="Center" Visibility="{Binding IsDev, Mode=OneWay, Converter={StaticResource BoolToVis}}">(dev)</Label>
 
@@ -208,14 +211,29 @@
             </DockPanel>
         </Border>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button x:Name="selectAllModsButton" Margin="0,10,0,0" Width="100" Height="30" FontSize="16" Style="{StaticResource BlueButton}"
-                    Click="selectAllModsButton_Click">Enable All</Button>
-            <Button x:Name="unselectAllModsButton" Margin="10,10,0,0" Width="100" Height="30" FontSize="16" Style="{StaticResource BlueButton}"
-                    Click="unselectAllModsButton_Click">Disable All</Button>
+            <Button x:Name="selectAllModsButton" Margin="0,10,0,0" Width="100" Height="30"
+                    FontSize="16" Style="{StaticResource BlueButton}"
+                    Content="Enable All"
+                    Click="selectAllModsButton_Click"/>
+            <Button x:Name="unselectAllModsButton" Margin="10,10,0,0" Width="100" Height="30"
+                    FontSize="16" Style="{StaticResource OrangeButton}"
+                    Content="Disable All"
+                    Click="unselectAllModsButton_Click"/>
             <Button x:Name="sortModsButton" Margin="10,10,0,0" Width="100" Height="30"
                     FontSize="16" Style="{StaticResource BlueButton}"
+                    Content="Sort Mods"
                     ToolTip="This re-orders the mods to put dev and local folder mods at the top of the list and then all workshop mods sorted by their workshop ID."
-                    Click="sortModsButton_Click">Sort Mods</Button>
+                    Click="sortModsButton_Click"/>
+            <Button x:Name="bisectTopButton" Margin="10,10,0,0" Width="120" Height="30"
+                    FontSize="16" Style="{StaticResource OrangeButton}"
+                    Content="Bisect Upper"
+                    ToolTip="Disables the lower half of currently enabled mods for crash diagnostic purposes."
+                    Click="BisectTopButton_OnClick"/>
+            <Button x:Name="bisectBottomButton" Margin="10,10,0,0" Width="120" Height="30"
+                    FontSize="16" Style="{StaticResource OrangeButton}"
+                    Content="Bisect Lower"
+                    ToolTip="Disables the upper half of currently enabled mods for crash diagnostic purposes."
+                    Click="BisectBottomButton_OnClick"/>
         </StackPanel>
 
         <Border x:Name="modListLockScreen" Visibility="Collapsed" Grid.RowSpan="2" Background="Black" Opacity="0.9">

@@ -78,6 +78,7 @@ namespace ONIModLauncher
 
 		public void StartGameMonitor()
 		{
+			LoadLaunchConfigs(); // hacky but this is called at the right time
 			gameMonitor.RunWorkerAsync();
 		}
 

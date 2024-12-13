@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-
+using System.Windows.Media;
 using ONIModLauncher.Configs;
 
 namespace ONIModLauncher
@@ -58,6 +58,9 @@ namespace ONIModLauncher
 		public string Title
 		{ get; set; }
 
+		public Color TitleColor
+		{ get; set; } = Colors.White;
+
 		public DateTimeOffset Version
 		{ get; set; }
 
@@ -108,6 +111,22 @@ namespace ONIModLauncher
 		}
 
 		// DLC 1
+
+		public bool EnabledForCurrentDLC
+		{
+			get => Launcher.Instance.PlayerPrefs.DLC1Enabled ? EnabledDLC1 : EnabledVanilla;
+			set
+			{
+				if (Launcher.Instance.PlayerPrefs.DLC1Enabled)
+				{
+					EnabledDLC1 = value;
+				}
+				else
+				{
+					EnabledVanilla = value;
+				}
+			}
+		}
 
 		public bool SupportsDLC1
 		{ get; set; }

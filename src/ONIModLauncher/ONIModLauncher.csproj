@@ -11,8 +11,13 @@
     <Description>A mod manager and launcher for Oxygen Not Included.</Description>
     <PackageProjectUrl>https://github.com/romen-h/ONI-ModLauncher</PackageProjectUrl>
     <RepositoryUrl>https://github.com/romen-h/ONI-ModLauncher</RepositoryUrl>
-    <Version>0.6.0</Version>
-    <VersionSuffix>alpha</VersionSuffix>
+    <BuildYear>$([System.DateTime]::UtcNow.ToString("yyyy"))</BuildYear>
+    <BuildMonth>$([System.DateTime]::UtcNow.ToString("MM"))</BuildMonth>
+    <BuildDay>$([System.DateTime]::UtcNow.ToString("dd"))</BuildDay>
+    <BuildHour>$([System.DateTime]::UtcNow.ToString("HH"))</BuildHour>
+    <BuildMinute>$([System.DateTime]::UtcNow.ToString("mm"))</BuildMinute>
+    <VersionPrefix>$(BuildYear).$(BuildMonth).$(BuildDay).1$(BuildHour)$(BuildMinute)</VersionPrefix>
+    <VersionSuffix>beta</VersionSuffix>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
     <StartupObject>ONIModLauncher.App</StartupObject>
     <RootNamespace>ONIModLauncher</RootNamespace>

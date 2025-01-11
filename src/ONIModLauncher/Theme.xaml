@@ -17,6 +17,11 @@
     <Color x:Key="LightYellowColor" R="218" G="169" B="50" A="255"/>
     <Color x:Key="OrangeColor" R="211" G="137" B="78" A="255"/>
     <Color x:Key="LightOrangeColor" R="251" G="179" B="59" A="255"/>
+    <Color x:Key="RedColor" R="244" G="74" B="71" A="255"/>
+    <Color x:Key="LightRedColor" R="255" G="101" B="74" A="255"/>
+    <Color x:Key="GreenColor" R="87" G="185" B="94" A="255"/>
+    <Color x:Key="LightGreenColor" R="119" G="255" B="129" A="255"/>
+    <Color x:Key="KleiOrange" R="255" G="102" B="52" A="255"/>
 
     <SolidColorBrush x:Key="DarkBrush" Color="{StaticResource DarkColor}"/>
     <SolidColorBrush x:Key="MediumBrush" Color="{StaticResource MediumColor}"/>
@@ -31,6 +36,10 @@
     <SolidColorBrush x:Key="LightYellowBrush" Color="{StaticResource LightYellowColor}"/>
     <SolidColorBrush x:Key="OrangeBrush" Color="{StaticResource OrangeColor}"/>
     <SolidColorBrush x:Key="LightOrangeBrush" Color="{StaticResource LightOrangeColor}"/>
+    <SolidColorBrush x:Key="RedBrush" Color="{StaticResource RedColor}"/>
+    <SolidColorBrush x:Key="LightRedBrush" Color="{StaticResource LightRedColor}"/>
+    <SolidColorBrush x:Key="GreenBrush" Color="{StaticResource GreenColor}"/>
+    <SolidColorBrush x:Key="LightGreenBrush" Color="{StaticResource LightGreenColor}"/>
 
     <Style x:Key="PinkButton" TargetType="{x:Type Button}">
         <Setter Property="Background" Value="{StaticResource PinkBrush}"/>
@@ -100,6 +109,32 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Background" Value="{StaticResource LightOrangeBrush}" TargetName="Border" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" Value="Gray" TargetName="Border"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GreenButton" TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="{StaticResource GreenBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontFamily" Value="{StaticResource ONIFont}"/>
+        <Setter Property="Padding" Value="5"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="Border" Background="{TemplateBinding Background}" BorderThickness="1" BorderBrush="Black">
+                        <Grid Margin="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{StaticResource LightGreenBrush}" TargetName="Border" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Background" Value="Gray" TargetName="Border"/>

@@ -34,6 +34,8 @@ namespace ONIModLauncher
 		[DllImport("shell32.dll")]
 		static extern int SHGetKnownFolderPath([MarshalAs(UnmanagedType.LPStruct)] Guid rfid, uint dwFlags, IntPtr hToken, out IntPtr pszPath);
 
+		private const string LAUNCHER_SETTINGS_CONFIG_NAME = "settings.json";
+
 		public const string ONI_EXE_NAME = "OxygenNotIncluded.exe";
 		
 		private const string ONI_DEBUG_PREFS_NAME = "settings.yml";
@@ -66,6 +68,12 @@ namespace ONIModLauncher
 		/// Documents/Klei/OxygenNotIncluded
 		/// </summary>
 		public static string GameDocumentsFolder
+		{ get; private set; }
+
+		/// <summary>
+		/// Documents/Klei/OxygenNotIncludes/ModLauncher/settings.json
+		/// </summary>
+		public static string LauncherSettingsFile
 		{ get; private set; }
 
 		/// <summary>
@@ -152,6 +160,10 @@ namespace ONIModLauncher
 				MessageBox.Show("Could not find Oxygen Not Included documents folder.\nMake sure that the game is installed and has been run at least once.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 				return false;
 			}
+
+			string modLauncherFolder = Path.Combine(GameDocumentsFolder, "Mod Launcher");
+			Directory.CreateDirectory(modLauncherFolder);
+			LauncherSettingsFile = Path.Combine(modLauncherFolder, LAUNCHER_SETTINGS_CONFIG_NAME);
 
 			SavesFolder = Path.Combine(GameDocumentsFolder, "save_files");
 

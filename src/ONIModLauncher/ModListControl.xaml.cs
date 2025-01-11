@@ -152,6 +152,23 @@ namespace ONIModLauncher
 			return titleMatched;
 		}
 
+		private void ToggleKeepEnabledMenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			MenuItem mi = sender as MenuItem;
+			if (mi.DataContext is ONIMod mod)
+			{
+				mod.KeepEnabled = !mod.KeepEnabled;
+			}
+		}
+
+		private void ToggleBrokenMenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			MenuItem mi = sender as MenuItem;
+			if (mi.DataContext is ONIMod mod)
+			{
+				mod.IsBroken = !mod.IsBroken;
+			}
+		}
 
 		private void MoveToTopMenuItem_OnClick(object sender, RoutedEventArgs e)
 		{

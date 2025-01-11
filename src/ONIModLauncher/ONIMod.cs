@@ -32,22 +32,32 @@ namespace ONIModLauncher
 			{
 				if (s_SortingBiases.TryGetValue(ID, out string sortPrefix))
 				{
-					return $"...{sortPrefix}.{ID}";
+					return $"0_{sortPrefix}.{ID}";
+				}
+				else if (ModManager.Instance.Settings.KeepEnabled.Contains(UniqueKey))
+				{
+					return $"1_{ID}";
 				}
 				else if (IsDev)
 				{
-					return $"..{ID}";
+					return $"2_{ID}";
 				}
 				else if (IsLocal)
 				{
-					return $".{ID}";
+					return $"3_{ID}";
+				}
+				else if (IsBroken)
+				{
+					return $"5_{ID}";
 				}
 				else
 				{
-					return ID;
+					return $"4_{ID}";
 				}
 			}
 		}
+
+		public string UniqueKey => $"{Type}.{ID}";
 
 		public string ID
 		{ get; set; }
@@ -139,6 +149,40 @@ namespace ONIModLauncher
 			{
 				enabledDLC1 = value;
 				InvokePropertyChanged(nameof(EnabledDLC1));
+			}
+		}
+
+		public bool KeepEnabled
+		{
+			get => ModManager.Instance.Settings.KeepEnabled.Contains(UniqueKey);
+			set
+			{
+				if (value)
+				{
+					ModManager.Instance.Settings.AddKeepEnabled(UniqueKey);
+				}
+				else
+				{
+					ModManager.Instance.Settings.RemoveKeepEnabled(UniqueKey);
+				}
+				InvokePropertyChanged(nameof(KeepEnabled));
+			}
+		}
+
+		public bool IsBroken
+		{
+			get => ModManager.Instance.Settings.BrokenMods.Contains(UniqueKey);
+			set
+			{
+				if (value)
+				{
+					ModManager.Instance.Settings.AddBrokenMod(UniqueKey);
+				}
+				else
+				{
+					ModManager.Instance.Settings.RemoveBrokenMod(UniqueKey);
+				}
+				InvokePropertyChanged(nameof(IsBroken));
 			}
 		}
 

@@ -41,6 +41,9 @@ namespace ONIModLauncher
 
 		private const string DLC1_ID = "EXPANSION1_ID";
 
+		public LauncherSettingsJson Settings
+		{ get; private set; }
+
 		private ModConfigJson modConfig;
 
 		private readonly Dictionary<ulong, ONIMod> _steamMods = new Dictionary<ulong, ONIMod>();
@@ -63,7 +66,47 @@ namespace ONIModLauncher
 
 			ctx = SynchronizationContext.Current;
 
+			LoadSettings();
+
 			LoadModList();
+		}
+
+		public void LoadSettings()
+		{
+			Settings = new LauncherSettingsJson();
+
+			if (File.Exists(GamePaths.LauncherSettingsFile))
+			{
+				try
+				{
+					string json = File.ReadAllText(GamePaths.LauncherSettingsFile);
+					Settings = JsonConvert.DeserializeObject<LauncherSettingsJson>(json);
+				}
+				catch (Exception ex)
+				{
+					Debug.WriteLine(ex.ToString());
+				}
+			}
+
+			Settings.PropertyChanged += LauncherConfig_PropertyChanged;
+		}
+
+		public void SaveSettings()
+		{
+			try
+			{
+				string json = JsonConvert.SerializeObject(Settings);
+				File.WriteAllText(GamePaths.LauncherSettingsFile, json);
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine(ex.ToString());
+			}
+		}
+
+		private void LauncherConfig_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			SaveSettings();
 		}
 
 		public void LoadModList() => LoadModList(GamePaths.ModsConfigFile);
@@ -420,6 +463,8 @@ namespace ONIModLauncher
 			autoSaveDisabled = true;
 			foreach (var mod in Mods)
 			{
+				if (mod.IsBroken) continue;
+
 				mod.EnabledVanilla = true;
 				mod.EnabledDLC1 = true;
 			}
@@ -432,6 +477,8 @@ namespace ONIModLauncher
 			autoSaveDisabled = true;
 			foreach (var mod in Mods)
 			{
+				if (mod.KeepEnabled) continue;
+
 				mod.EnabledVanilla = false;
 				mod.EnabledDLC1 = false;
 			}

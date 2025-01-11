@@ -149,8 +149,10 @@
                                                    FontFamily="{StaticResource ONIFont}" FontSize="18" TextOptions.TextFormattingMode="Display"
                                                    Foreground="{Binding TitleColor, Converter={StaticResource ColorToBrush}}"
                                                    Text="{Binding Path=Title}"/>
-                                        <Label Foreground="White" VerticalAlignment="Center" Visibility="{Binding IsLocal, Mode=OneWay, Converter={StaticResource BoolToVis}}">(local)</Label>
-                                        <Label Foreground="White" VerticalAlignment="Center" Visibility="{Binding IsDev, Mode=OneWay, Converter={StaticResource BoolToVis}}">(dev)</Label>
+                                        <Label Foreground="White" VerticalAlignment="Center" Visibility="{Binding IsLocal, Mode=OneWay, Converter={StaticResource BoolToVis}}">[local]</Label>
+                                        <Label Foreground="White" VerticalAlignment="Center" Visibility="{Binding IsDev, Mode=OneWay, Converter={StaticResource BoolToVis}}">[dev]</Label>
+                                        <Label Foreground="White" VerticalAlignment="Center" Visibility="{Binding KeepEnabled, Mode=OneWay, Converter={StaticResource BoolToVis}}">[keep]</Label>
+                                        <Label Foreground="White" VerticalAlignment="Center" Visibility="{Binding IsBroken, Mode=OneWay, Converter={StaticResource BoolToVis}}">[broken]</Label>
 
                                     </StackPanel>
 
@@ -185,6 +187,8 @@
                                 </Grid>
                                 <Border.ContextMenu>
                                     <ContextMenu>
+                                        <MenuItem Header="Toggle Keep" Click="ToggleKeepEnabledMenuItem_OnClick"/>
+                                        <MenuItem Header="Toggle Broken" Click="ToggleBrokenMenuItem_OnClick"></MenuItem>
                                         <MenuItem Header="Move to Top" Click="MoveToTopMenuItem_OnClick"/>
                                         <MenuItem Header="Move to Bottom" Click="MoveToBottomMenuItem_OnClick"/>
                                     </ContextMenu>
@@ -193,6 +197,9 @@
                             <DataTemplate.Triggers>
                                 <DataTrigger Binding="{Binding IsDev}" Value="True">
                                     <Setter TargetName="border" Property="Background" Value="{StaticResource YellowBrush}"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsBroken}" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{StaticResource RedBrush}"/>
                                 </DataTrigger>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter TargetName="border" Property="Background" Value="{StaticResource LightBlueBrush}"/>
@@ -203,6 +210,13 @@
                                         <Condition Binding="{Binding ElementName=border, Path=IsMouseOver}" Value="True"/>
                                     </MultiDataTrigger.Conditions>
                                     <Setter TargetName="border" Property="Background" Value="{StaticResource LightYellowBrush}"/>
+                                </MultiDataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding IsBroken}" Value="True"/>
+                                        <Condition Binding="{Binding ElementName=border, Path=IsMouseOver}" Value="True"/>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter TargetName="border" Property="Background" Value="{StaticResource LightRedBrush}"/>
                                 </MultiDataTrigger>
                             </DataTemplate.Triggers>
                         </DataTemplate>
@@ -220,9 +234,9 @@
                     Content="Disable All"
                     Click="unselectAllModsButton_Click"/>
             <Button x:Name="sortModsButton" Margin="10,10,0,0" Width="100" Height="30"
-                    FontSize="16" Style="{StaticResource BlueButton}"
-                    Content="Sort Mods"
-                    ToolTip="This re-orders the mods to put dev and local folder mods at the top of the list and then all workshop mods sorted by their workshop ID."
+                    FontSize="16" Style="{StaticResource GreenButton}"
+                    Content="Smart Sort"
+                    ToolTip="This re-orders the mods to group together pinned, dev, local, steam, and broken mods in that order."
                     Click="sortModsButton_Click"/>
             <Button x:Name="bisectTopButton" Margin="10,10,0,0" Width="120" Height="30"
                     FontSize="16" Style="{StaticResource OrangeButton}"

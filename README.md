@@ -1,4 +1,4 @@
-# ONI-ModLauncher
+# ONI Mod Launcher
 ### A standalone mod manager and launcher for Oxygen Not Included.
 
 <img src="doc/Screenshot.png"/>

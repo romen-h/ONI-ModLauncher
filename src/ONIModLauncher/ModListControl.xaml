@@ -125,6 +125,7 @@
                                     <StackPanel Grid.Column="0" Orientation="Horizontal">
 
                                         <Image Source="/Assets/dragger.png" Width="32"
+                                               Visibility="{Binding Path=IsEditable, Converter={StaticResource BoolToVis}}"
                                                ToolTip="Drag to reorder"/>
 
                                         <TextBox Width="48" Height="36" Margin="5"
@@ -134,16 +135,9 @@
                                                  Text="0"/>
 
                                         <CheckBox Margin="5"
-                                                  Visibility="{Binding Source={x:Static local:Launcher.Instance}, Path=PlayerPrefs.DLC1Enabled, Converter={StaticResource InvBoolToVis}, FallbackValue=Collapsed}"
-                                                  IsEnabled="{Binding SupportsVanilla, Mode=OneWay}"
-                                                  IsChecked="{Binding EnabledVanilla, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                  ToolTip="Enable for Vanilla"/>
-
-                                        <CheckBox Margin="5"
-                                                  Visibility="{Binding Source={x:Static local:Launcher.Instance}, Path=PlayerPrefs.DLC1Enabled, Converter={StaticResource BoolToVis}, FallbackValue=Collapsed}"
-                                                  IsEnabled="{Binding SupportsDLC1, Mode=OneWay}"
-                                                  IsChecked="{Binding EnabledDLC1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                  ToolTip="Enable for Spaced Out!"/>
+                                                  IsEnabled="{Binding CanEditEnabled, Mode=OneWay}"
+                                                  IsChecked="{Binding Enabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  ToolTip="Enable"/>
 
                                         <TextBlock x:Name="titleText" Margin="10,0,0,0" VerticalAlignment="Center"
                                                    FontFamily="{StaticResource ONIFont}" FontSize="18" TextOptions.TextFormattingMode="Display"
@@ -153,6 +147,7 @@
                                         <Label Foreground="White" VerticalAlignment="Center" Visibility="{Binding IsDev, Mode=OneWay, Converter={StaticResource BoolToVis}}">[dev]</Label>
                                         <Label Foreground="White" VerticalAlignment="Center" Visibility="{Binding KeepEnabled, Mode=OneWay, Converter={StaticResource BoolToVis}}">[keep]</Label>
                                         <Label Foreground="White" VerticalAlignment="Center" Visibility="{Binding IsBroken, Mode=OneWay, Converter={StaticResource BoolToVis}}">[broken]</Label>
+                                        <Label Foreground="White" VerticalAlignment="Center" Visibility="{Binding ParsedLegacyCompatibility, Mode=OneWay, Converter={StaticResource BoolToVis}}">[old yaml]</Label>
 
                                     </StackPanel>
 
@@ -189,8 +184,12 @@
                                     <ContextMenu>
                                         <MenuItem Header="Toggle Keep" Click="ToggleKeepEnabledMenuItem_OnClick"/>
                                         <MenuItem Header="Toggle Broken" Click="ToggleBrokenMenuItem_OnClick"></MenuItem>
-                                        <MenuItem Header="Move to Top" Click="MoveToTopMenuItem_OnClick"/>
-                                        <MenuItem Header="Move to Bottom" Click="MoveToBottomMenuItem_OnClick"/>
+                                        <MenuItem Header="Move to Top"
+                                                  IsEnabled="{Binding IsEditable}"
+                                                  Click="MoveToTopMenuItem_OnClick"/>
+                                        <MenuItem Header="Move to Bottom"
+                                                  IsEnabled="{Binding IsEditable}"
+                                                  Click="MoveToBottomMenuItem_OnClick"/>
                                     </ContextMenu>
                                 </Border.ContextMenu>
                             </Border>
@@ -251,9 +250,17 @@
         </StackPanel>
 
         <Border x:Name="modListLockScreen" Visibility="Collapsed" Grid.RowSpan="2" Background="Black" Opacity="0.9">
-            <Label HorizontalAlignment="Center" VerticalAlignment="Center"
-                   Foreground="White"
-                   FontSize="20" FontFamily="{StaticResource ONIFont}">Mod list cannot be changed while the game is running.</Label>
+            <Grid>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Label HorizontalAlignment="Center"
+                           Foreground="White"
+                           FontSize="20" FontFamily="{StaticResource ONIFont}">Mod list cannot be changed while the game is running.</Label>
+                    <Button Margin="10" Width="120" Height="30"
+                            Style="{StaticResource BlueButton}"
+                            Content="Hide"
+                            Click="HideGameRunningWarningBtn_Click"/>
+                </StackPanel>
+            </Grid>
         </Border>
     </Grid>
 </UserControl>

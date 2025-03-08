@@ -20,10 +20,16 @@ namespace ONIModLauncher
 			{ "1967921388", "0003" }, // Stock Bug Fix
 		};
 
+		private readonly Dictionary<string, Compatibility> _compatibilities = new Dictionary<string, Compatibility>();
+
 		public event PropertyChangedEventHandler PropertyChanged;
 		private void InvokePropertyChanged(string name)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+		}
+		internal void RefreshForUI()
+		{
+			InvokePropertyChanged(null);
 		}
 
 		public string SortingIndex
@@ -103,54 +109,72 @@ namespace ONIModLauncher
 		public string ConfigFile
 		{ get; set; }
 
+		public bool ParsedLegacyCompatibility
+		{ get; set; } = false;
 
-		// Vanilla
-
-		public bool SupportsVanilla
-		{ get; set; }
-
-		private bool enabledVanilla;
-		public bool EnabledVanilla
+		public bool CanEditEnabled
 		{
-			get => SupportsVanilla && enabledVanilla;
-			set
+			get
 			{
-				enabledVanilla = value;
-				InvokePropertyChanged(nameof(EnabledVanilla));
+				if (Launcher.Instance.IsRunning) return false;
+				if (ParsedLegacyCompatibility) return true;
+				return SupportsCurrentDLC;
 			}
 		}
 
-		// DLC 1
+		internal bool enabledForVanilla = false;
+		internal bool enabledForSpacedOut = false;
 
-		public bool EnabledForCurrentDLC
+		public bool Enabled
 		{
-			get => Launcher.Instance.PlayerPrefs.DLC1Enabled ? EnabledDLC1 : EnabledVanilla;
-			set
+			get
 			{
-				if (Launcher.Instance.PlayerPrefs.DLC1Enabled)
+				// If we're using strictly the new compatibility yaml then we can infer it may never be enabled
+				if (!ParsedLegacyCompatibility && !SupportsCurrentDLC) return false;
+				if (Launcher.Instance.PlayerPrefs.SpacedOutEnabled)
 				{
-					EnabledDLC1 = value;
+					return enabledForSpacedOut;
 				}
 				else
 				{
-					EnabledVanilla = value;
+					return enabledForVanilla;
+				}
+			}
+			set
+			{
+				// If we're using strictly the new compatibility yaml then we can deny this edit
+				if (value && !ParsedLegacyCompatibility && !SupportsCurrentDLC) return;
+				if (Launcher.Instance.PlayerPrefs.SpacedOutEnabled)
+				{
+					enabledForSpacedOut = value;
+				}
+				else
+				{
+					enabledForVanilla = value;
 				}
 			}
 		}
 
-		public bool SupportsDLC1
-		{ get; set; }
-
-		private bool enabledDLC1;
-		public bool EnabledDLC1
+		public bool SupportsCurrentDLC
 		{
-			get => SupportsDLC1 && enabledDLC1;
-			set
+			get
 			{
-				enabledDLC1 = value;
-				InvokePropertyChanged(nameof(EnabledDLC1));
+				if (Launcher.Instance.PlayerPrefs.SpacedOutEnabled == false && !SupportsVanilla) return false;
+				if (GamePaths.HasSpacedOut && Launcher.Instance.PlayerPrefs.SpacedOutEnabled && !SupportsSpacedOut) return false;
+				if (GamePaths.HasFrostyPlanetPack && !SupportsFrostyPlanetPack) return false;
+				if (GamePaths.HasBionicBoosterPack && !SupportsBionicBoosterPack) return false;
+				
+				return true;
 			}
 		}
+
+		public bool SupportsVanilla => (int)_compatibilities[DLC.Vanilla] >= (int)Compatibility.Compatible;
+
+		public bool SupportsSpacedOut => (int)_compatibilities[DLC.SpacedOut] >= (int)Compatibility.Compatible;
+
+		public bool SupportsFrostyPlanetPack => (int)_compatibilities[DLC.FrostyPlanetPack] >= (int)Compatibility.Compatible;
+
+		public bool SupportsBionicBoosterPack => (int)_compatibilities[DLC.BionicBoosterPack] >= (int)Compatibility.Compatible;
 
 		public bool KeepEnabled
 		{
@@ -189,6 +213,8 @@ namespace ONIModLauncher
 		public LauncherMetadataJson LauncherData
 		{ get; set; }
 
+		public bool IsEditable => !Launcher.Instance.IsRunning;
+
 		public ICommand OpenConfigCommand
 		{ get; private set; }
 
@@ -222,6 +248,16 @@ namespace ONIModLauncher
 				(param) => ShellHelper.OpenFolder(Folder),
 				(param) => true
 			);
+
+			_compatibilities[DLC.Vanilla] = Compatibility.Unknown;
+			_compatibilities[DLC.SpacedOut] = Compatibility.Unknown;
+			_compatibilities[DLC.FrostyPlanetPack] = Compatibility.Unknown;
+			_compatibilities[DLC.BionicBoosterPack] = Compatibility.Unknown;
+		}
+
+		internal void SetCompatibility(string dlc, Compatibility compat)
+		{
+			_compatibilities[dlc] = compat;
 		}
 	}
 }

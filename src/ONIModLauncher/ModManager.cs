@@ -37,10 +37,6 @@ namespace ONIModLauncher
 			}
 		}
 
-		private const string VANILLA_ID = "";
-
-		private const string DLC1_ID = "EXPANSION1_ID";
-
 		public LauncherSettingsJson Settings
 		{ get; private set; }
 
@@ -61,6 +57,8 @@ namespace ONIModLauncher
 
 		private ModManager()
 		{
+			Launcher.Instance.PropertyChanged += Launcher_PropertyChanged;
+
 			Mods = new ObservableCollection<ONIMod>();
 			Mods.CollectionChanged += Mods_CollectionChanged;
 
@@ -69,6 +67,19 @@ namespace ONIModLauncher
 			LoadSettings();
 
 			LoadModList();
+		}
+
+		private void Launcher_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(Launcher.IsRunning) || e.PropertyName == null)
+			{
+				RefreshAllModsForUI();
+			}
+			
+			if (e.PropertyName == nameof(Launcher.PlayerPrefs) || e.PropertyName == null)
+			{
+				RefreshAllModsForUI();
+			}
 		}
 
 		public void LoadSettings()
@@ -360,32 +371,76 @@ namespace ONIModLauncher
 
 			if (modInfo != null)
 			{
-				string supported = modInfo.supportedContent.ToLower();
+				if (modInfo.supportedContent != null)
+				{
+					string supported = modInfo.supportedContent.ToUpperInvariant();
 
-				if (supported.Contains("vanilla_id") || supported.Contains("all"))
-				{
-					mod.SupportsVanilla = true;
+					if (supported.Contains("ALL"))
+					{
+						mod.SetCompatibility(DLC.Vanilla, Compatibility.Compatible);
+						mod.SetCompatibility(DLC.SpacedOut, Compatibility.Compatible);
+						mod.SetCompatibility(DLC.FrostyPlanetPack, Compatibility.Compatible);
+						mod.SetCompatibility(DLC.BionicBoosterPack, Compatibility.Compatible);
+					}
+					else
+					{
+						// Definitely need to handle this carefully
+						mod.SetCompatibility(DLC.Vanilla, supported.Contains(DLC.Vanilla) ? Compatibility.Compatible : Compatibility.Incompatible);
+						mod.SetCompatibility(DLC.SpacedOut, supported.Contains(DLC.SpacedOut) ? Compatibility.Compatible : Compatibility.Incompatible);
+						mod.SetCompatibility(DLC.FrostyPlanetPack, Compatibility.Unknown);
+						mod.SetCompatibility(DLC.BionicBoosterPack, Compatibility.Unknown);
+					}
+
+					mod.ParsedLegacyCompatibility = true;
 				}
-				if (modListItem.enabledForDlc != null)
+				else
 				{
-					mod.EnabledVanilla = modListItem.enabledForDlc.Contains(VANILLA_ID);
+					mod.SetCompatibility(DLC.Vanilla, Compatibility.Compatible);
+					mod.SetCompatibility(DLC.SpacedOut, Compatibility.Compatible);
+					mod.SetCompatibility(DLC.FrostyPlanetPack, Compatibility.Compatible);
+					mod.SetCompatibility(DLC.BionicBoosterPack, Compatibility.Compatible);
 				}
 
-				if (supported.Contains("expansion1_id") || supported.Contains("all"))
+				if (modInfo.forbiddenDlcIds != null)
 				{
-					mod.SupportsDLC1 = true;
+					if (modInfo.forbiddenDlcIds.Contains(DLC.SpacedOut))
+					{
+						mod.SetCompatibility(DLC.SpacedOut, Compatibility.Incompatible);
+					}
+					if (modInfo.forbiddenDlcIds.Contains(DLC.FrostyPlanetPack))
+					{
+						mod.SetCompatibility(DLC.FrostyPlanetPack, Compatibility.Incompatible);
+					}
+					if (modInfo.forbiddenDlcIds.Contains(DLC.BionicBoosterPack))
+					{
+						mod.SetCompatibility(DLC.BionicBoosterPack, Compatibility.Incompatible);
+					}
 				}
-				if (modListItem.enabledForDlc != null)
+				if (modInfo.requiredDlcIds != null)
 				{
-					mod.EnabledDLC1 = modListItem.enabledForDlc.Contains(DLC1_ID);
+					if (modInfo.requiredDlcIds.Contains(DLC.SpacedOut))
+					{
+						mod.SetCompatibility(DLC.SpacedOut, Compatibility.Required);
+					}
+					if (modInfo.requiredDlcIds.Contains(DLC.FrostyPlanetPack))
+					{
+						mod.SetCompatibility(DLC.FrostyPlanetPack, Compatibility.Required);
+					}
+					if (modInfo.requiredDlcIds.Contains(DLC.BionicBoosterPack))
+					{
+						mod.SetCompatibility(DLC.BionicBoosterPack, Compatibility.Required);
+					}
 				}
 			}
-			else
+
+			if (modListItem.enabledForDlc != null)
 			{
-				mod.SupportsVanilla = false;
-				mod.EnabledVanilla = false;
-				mod.SupportsDLC1 = false;
-				mod.EnabledDLC1 = false;
+				mod.enabledForVanilla = modListItem.enabledForDlc.Contains("");
+			}
+
+			if (modListItem.enabledForDlc != null)
+			{
+				mod.enabledForSpacedOut = modListItem.enabledForDlc.Contains(DLC.SpacedOut);
 			}
 
 			string modMetadataFile = Path.Combine(mod.Folder, "LauncherMetadata.json");
@@ -439,6 +494,14 @@ namespace ONIModLauncher
 			return null;
 		}
 
+		private void RefreshAllModsForUI()
+		{
+			foreach (var mod in Mods)
+			{
+				mod.RefreshForUI();
+			}
+		}
+
 		private bool autoSaveDisabled = false;
 
 		private void Mods_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -452,7 +515,7 @@ namespace ONIModLauncher
 		{
 			if (autoSaveDisabled) return;
 
-			if (e.PropertyName == null || e.PropertyName == nameof(ONIMod.EnabledVanilla) || e.PropertyName == nameof(ONIMod.EnabledDLC1))
+			if (e.PropertyName == null || e.PropertyName == nameof(ONIMod.Enabled))
 			{
 				SaveModList();
 			}
@@ -460,34 +523,40 @@ namespace ONIModLauncher
 
 		public void EnableAllMods()
 		{
+			if (Launcher.Instance.IsRunning) return;
+
 			autoSaveDisabled = true;
 			foreach (var mod in Mods)
 			{
 				if (mod.IsBroken) continue;
 
-				mod.EnabledVanilla = true;
-				mod.EnabledDLC1 = true;
+				mod.Enabled = true;
 			}
 			autoSaveDisabled = false;
 			SaveModList();
+			RefreshAllModsForUI();
 		}
 
 		public void DisableAllMods()
 		{
+			if (Launcher.Instance.IsRunning) return;
+
 			autoSaveDisabled = true;
 			foreach (var mod in Mods)
 			{
 				if (mod.KeepEnabled) continue;
 
-				mod.EnabledVanilla = false;
-				mod.EnabledDLC1 = false;
+				mod.Enabled = false;
 			}
 			autoSaveDisabled = false;
 			SaveModList();
+			RefreshAllModsForUI();
 		}
 
 		public void SortMods()
 		{
+			if (Launcher.Instance.IsRunning) return;
+
 			autoSaveDisabled = true;
 			var arr = Mods.ToArray();
 			Mods.Clear();
@@ -502,14 +571,16 @@ namespace ONIModLauncher
 
 		public void BisectTop()
 		{
-			int enabledModCount = Mods.Count((m) => m.EnabledForCurrentDLC);
+			if (Launcher.Instance.IsRunning) return;
+
+			int enabledModCount = Mods.Count((m) => m.Enabled);
 			int halfOfEnabledMods = (int)Math.Ceiling(enabledModCount / 2.0);
 
 			foreach (var mod in Mods.Reverse())
 			{
-				if (mod.EnabledForCurrentDLC)
+				if (mod.Enabled)
 				{
-					mod.EnabledForCurrentDLC = false;
+					mod.Enabled = false;
 					enabledModCount--;
 				}
 
@@ -519,14 +590,16 @@ namespace ONIModLauncher
 
 		public void BisectBottom()
 		{
-			int enabledModCount = Mods.Count((m) => m.EnabledForCurrentDLC);
+			if (Launcher.Instance.IsRunning) return;
+
+			int enabledModCount = Mods.Count((m) => m.Enabled);
 			int halfOfEnabledMods = (int)Math.Floor(enabledModCount / 2.0);
 
 			foreach (var mod in Mods)
 			{
-				if (mod.EnabledForCurrentDLC)
+				if (mod.Enabled)
 				{
-					mod.EnabledForCurrentDLC = false;
+					mod.Enabled = false;
 					enabledModCount--;
 				}
 
@@ -573,10 +646,10 @@ namespace ONIModLauncher
 						modListItem.status = ModStatus.Installed;
 						modListItem.enabled = false;
 						modListItem.enabledForDlc = new List<string>();
-						if (mod.EnabledVanilla)
-							modListItem.enabledForDlc.Add(VANILLA_ID);
-						if (mod.EnabledDLC1)
-							modListItem.enabledForDlc.Add(DLC1_ID);
+						if (mod.enabledForVanilla)
+							modListItem.enabledForDlc.Add("");
+						if (mod.enabledForSpacedOut)
+							modListItem.enabledForDlc.Add(DLC.SpacedOut);
 						modListItem.crash_count = mod.CrashCount;
 						modListItem.staticID = mod.StaticID;
 

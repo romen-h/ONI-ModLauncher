@@ -31,9 +31,11 @@ namespace ONIModLauncher
 
 		public bool CanLaunch => HasBaseGame && !IsRunning;
 
-		public bool CanToggleDLC1 => GamePaths.HasDLC1 && !IsRunning;
+		public bool CanToggleDLC1 => GamePaths.HasSpacedOut && !IsRunning;
 
-		public bool HasDLC2 => GamePaths.HasDLC2 && !IsRunning;
+		public bool HasFrostyPlanetPack => GamePaths.HasFrostyPlanetPack;
+
+		public bool HasBionicBoosterPack => GamePaths.HasBionicBoosterPack;
 
 		public bool CanEditLastSave => !IsRunning && DebugPrefs.AutoResumeLastSave;
 
@@ -72,8 +74,48 @@ namespace ONIModLauncher
 
 		public void LoadLaunchConfigs()
 		{
+			LoadPlayerPrefs();
+			LoadDebugPrefs();
+		}
+
+		private void LoadPlayerPrefs()
+		{
+			if (PlayerPrefs != null)
+			{
+				PlayerPrefs.PropertyChanged -= PlayerPrefs_PropertyChanged;
+			}
+
 			PlayerPrefs = KPlayerPrefsYaml.Load(GamePaths.PlayerPrefsFile);
+
+			if (PlayerPrefs != null)
+			{
+				PlayerPrefs.PropertyChanged += PlayerPrefs_PropertyChanged;
+			}
+		}
+
+		private void LoadDebugPrefs()
+		{
+			if (DebugPrefs != null)
+			{
+				DebugPrefs.PropertyChanged += DebugPrefs_PropertyChanged;
+			}
+
 			DebugPrefs = DebugSettingsYaml.Load(GamePaths.DebugSettingsFile);
+
+			if (DebugPrefs != null)
+			{
+				DebugPrefs.PropertyChanged += DebugPrefs_PropertyChanged;
+			}
+		}
+
+		private void PlayerPrefs_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			InvokePropertyChanged(nameof(PlayerPrefs));
+		}
+
+		private void DebugPrefs_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			InvokePropertyChanged(nameof(DebugPrefs));
 		}
 
 		public void StartGameMonitor()

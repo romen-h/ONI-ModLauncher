@@ -33,7 +33,7 @@
                 </CheckBox>
                 <CheckBox x:Name="dlc1Checkbox" Padding="10,5,0,5"
                           IsEnabled="{Binding Path=CanToggleDLC1}"
-                          IsChecked="{Binding Path=PlayerPrefs.DLC1Enabled}">
+                          IsChecked="{Binding Path=PlayerPrefs.SpacedOutEnabled}">
                     <Border BorderThickness="1" BorderBrush="Black">
                         <Image Source="/Assets/dlc1.jpg" Height="60"
                                RenderOptions.BitmapScalingMode="HighQuality"/>
@@ -41,9 +41,17 @@
                 </CheckBox>
                 <CheckBox x:Name="dlc2Checkbox" Padding="10,5,0,5"
                           IsEnabled="False"
-                          IsChecked="{Binding Path=HasDLC2, Mode=OneWay}">
+                          IsChecked="{Binding Path=HasFrostyPlanetPack, Mode=OneWay}">
                     <Border BorderThickness="1" BorderBrush="Black">
                         <Image Source="/Assets/dlc2.jpg" Height="60"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Border>
+                </CheckBox>
+                <CheckBox x:Name="dlc3Checkbox" Padding="10,5,0,5"
+                          IsEnabled="False"
+                          IsChecked="{Binding Path=HasBionicBoosterPack, Mode=OneWay}">
+                    <Border BorderThickness="1" BorderBrush="Black">
+                        <Image Source="/Assets/dlc3.jpg" Height="60"
                                RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Border>
                 </CheckBox>

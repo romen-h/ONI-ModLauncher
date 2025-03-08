@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <Authors>RomenH</Authors>
@@ -29,6 +29,7 @@
   <ItemGroup>
     <None Remove="Assets\dlc1.jpg" />
     <None Remove="Assets\dlc2.jpg" />
+    <None Remove="Assets\dlc3.jpg" />
     <None Remove="Assets\dragger.png" />
     <None Remove="Assets\DroidSans.ttf" />
     <None Remove="Assets\github-mark-white.png" />
@@ -54,6 +55,7 @@
   <ItemGroup>
     <Resource Include="Assets\dlc1.jpg" />
     <Resource Include="Assets\dlc2.jpg" />
+    <Resource Include="Assets\dlc3.jpg" />
     <Resource Include="Assets\dragger.png" />
     <Resource Include="Assets\DroidSans.ttf" />
     <Resource Include="Assets\github-mark-white.png" />

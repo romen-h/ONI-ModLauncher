@@ -12,8 +12,14 @@ namespace ONIModLauncher.Configs
 {
 	public class ModInfoYaml
 	{
-		[YamlMember]
-		public string supportedContent;
+		[YamlMember(DefaultValuesHandling = DefaultValuesHandling.OmitNull | DefaultValuesHandling.OmitDefaults)]
+		public string supportedContent = null;
+
+		[YamlMember(DefaultValuesHandling = DefaultValuesHandling.OmitNull | DefaultValuesHandling.OmitDefaults | DefaultValuesHandling.OmitEmptyCollections)]
+		public string[] requiredDlcIds = null;
+
+		[YamlMember(DefaultValuesHandling = DefaultValuesHandling.OmitNull | DefaultValuesHandling.OmitDefaults | DefaultValuesHandling.OmitEmptyCollections)]
+		public string[] forbiddenDlcIds = null;
 
 		[YamlMember]
 		public int minimumSupportedBuild;

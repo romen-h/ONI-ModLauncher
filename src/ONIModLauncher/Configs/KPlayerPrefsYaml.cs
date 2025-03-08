@@ -101,14 +101,14 @@ namespace ONIModLauncher.Configs
 		}
 
 		[YamlIgnore]
-		public bool DLC1Enabled
+		public bool SpacedOutEnabled
 		{
 			get => ints.ContainsKey(Expansion1EnabledKey) && ints[Expansion1EnabledKey] == 1;
 			set
 			{
 				ints[Expansion1EnabledKey] = value ? 1 : 0;
 				Save();
-				InvokePropertyChanged(nameof(DLC1Enabled));
+				InvokePropertyChanged(nameof(SpacedOutEnabled));
 			}
 		}
 
@@ -126,7 +126,7 @@ namespace ONIModLauncher.Configs
 
 		public KPlayerPrefsYaml()
 		{
-			if (GamePaths.HasDLC1)
+			if (GamePaths.HasSpacedOut)
 			{
 				strings[PlayShortOnLaunchKey] = @"intro\Spaced_Out_Intro";
 			}
@@ -135,7 +135,7 @@ namespace ONIModLauncher.Configs
 			ResolutionHeight = 1080;
 			RefreshRate = 60;
 			FullScreen = true;
-			DLC1Enabled = false;
+			SpacedOutEnabled = false;
 
 			configured = true;
 		}

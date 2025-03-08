@@ -42,9 +42,11 @@ namespace ONIModLauncher
 		private const string ONI_LAUNCH_PREFS_NAME = "kplayerprefs.yaml";
 		private const string ONI_MODS_CONFIG_NAME = "mods.json";
 
-		private const string DLC1_FLAG_FILE = "OxygenNotIncluded_Data\\StreamingAssets\\expansion1_bundle";
+		private const string SPACEDOUT_FLAG_FILE = "OxygenNotIncluded_Data\\StreamingAssets\\expansion1_bundle";
 
-		private const string DLC2_FLAG_FILE = "OxygenNotIncluded_Data\\StreamingAssets\\dlc2_bundle";
+		private const string FROSTY_FLAG_FILE = "OxygenNotIncluded_Data\\StreamingAssets\\dlc2_bundle";
+
+		private const string BIONIC_FLAG_FILE = "OxygenNotIncluded_Data\\StreamingAssets\\dlc3_bundle";
 
 		public static string GameExecutablePath
 		{ get; private set; }
@@ -58,10 +60,13 @@ namespace ONIModLauncher
 		public static string GameLogFile
 		{ get; private set; }
 
-		public static bool HasDLC1
+		public static bool HasSpacedOut
 		{ get; private set; }
 
-		public static bool HasDLC2
+		public static bool HasFrostyPlanetPack
+		{ get; private set; }
+
+		public static bool HasBionicBoosterPack
 		{ get; private set; }
 
 		/// <summary>
@@ -148,11 +153,14 @@ namespace ONIModLauncher
 
 			GameLogFile = Path.Combine(GetKnownFolderPath(localLowId), "Klei/Oxygen Not Included/Player.log"); 
 
-			string dlc1BundleFile = Path.Combine(GameInstallFolder, DLC1_FLAG_FILE);
-			HasDLC1 = File.Exists(dlc1BundleFile);
+			string spacedOutFile = Path.Combine(GameInstallFolder, SPACEDOUT_FLAG_FILE);
+			HasSpacedOut = File.Exists(spacedOutFile);
 
-			string dlc2BundleFile = Path.Combine(GameInstallFolder, DLC2_FLAG_FILE);
-			HasDLC2 = File.Exists(dlc2BundleFile);
+			string frostyFile = Path.Combine(GameInstallFolder, FROSTY_FLAG_FILE);
+			HasFrostyPlanetPack = File.Exists(frostyFile);
+
+			string bionicFile = Path.Combine(GameInstallFolder, BIONIC_FLAG_FILE);
+			HasBionicBoosterPack = File.Exists(bionicFile);
 
 			GameDocumentsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Klei\\OxygenNotIncluded");
 			if (!Directory.Exists(GameDocumentsFolder))

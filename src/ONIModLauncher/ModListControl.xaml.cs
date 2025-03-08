@@ -23,6 +23,8 @@ namespace ONIModLauncher
 	/// </summary>
 	public partial class ModListControl : UserControl
 	{
+		private bool warningAcknowledged = false;
+
 		private readonly DelayedEvent searchTypingDelay = new DelayedEvent(TimeSpan.FromMilliseconds(200));
 
 		public ModListControl()
@@ -44,7 +46,6 @@ namespace ONIModLauncher
 
 			Launcher.Instance.PropertyChanged += Launcher_PropertyChanged;
 
-			IsEnabled = Launcher.Instance.IsNotRunning;
 			modListLockScreen.Visibility = Visibility.Collapsed;
 		}
 
@@ -56,8 +57,15 @@ namespace ONIModLauncher
 				return;
 			}
 
-			IsEnabled = Launcher.Instance.IsNotRunning;
-			modListLockScreen.Visibility = Launcher.Instance.IsNotRunning ? Visibility.Collapsed : Visibility.Visible;
+			GongSolutions.Wpf.DragDrop.DragDrop.SetIsDragSource(modsList, Launcher.Instance.IsNotRunning);
+			modListLockScreen.Visibility = (warningAcknowledged || Launcher.Instance.IsNotRunning) ? Visibility.Collapsed : Visibility.Visible;
+			saveModListButton.IsEnabled = Launcher.Instance.IsNotRunning;
+			loadModListButton.IsEnabled = Launcher.Instance.IsNotRunning;
+			selectAllModsButton.IsEnabled = Launcher.Instance.IsNotRunning;
+			unselectAllModsButton.IsEnabled = Launcher.Instance.IsNotRunning;
+			sortModsButton.IsEnabled = Launcher.Instance.IsNotRunning;
+			bisectTopButton.IsEnabled = Launcher.Instance.IsNotRunning;
+			bisectBottomButton.IsEnabled = Launcher.Instance.IsNotRunning;
 		}
 
 		private void refreshModsButton_Click(object sender, RoutedEventArgs e)
@@ -198,6 +206,12 @@ namespace ONIModLauncher
 		private void BisectBottomButton_OnClick(object sender, RoutedEventArgs e)
 		{
 			ModManager.Instance.BisectBottom();
+		}
+
+		private void HideGameRunningWarningBtn_Click(object sender, RoutedEventArgs e)
+		{
+			warningAcknowledged = true;
+			modListLockScreen.Visibility = Visibility.Collapsed;
 		}
 	}
 }

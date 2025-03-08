@@ -24,6 +24,7 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>romenh.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
+    <ApplicationIcon>Assets/icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>

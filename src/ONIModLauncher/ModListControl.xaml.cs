@@ -177,6 +177,14 @@ namespace ONIModLauncher
 				mod.IsBroken = !mod.IsBroken;
 			}
 		}
+		private void TogglePendingMenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			MenuItem mi = sender as MenuItem;
+			if (mi.DataContext is ONIMod mod)
+			{
+				mod.HasTogglePending = !mod.HasTogglePending;
+			}
+		}
 
 		private void MoveToTopMenuItem_OnClick(object sender, RoutedEventArgs e)
 		{

@@ -309,6 +309,7 @@ namespace ONIModLauncher
 			ONIMod mod = new ONIMod();
 
 			mod.StaticID = modListItem.staticID;
+			mod.Status = modListItem.status;
 
 			ulong steamID = 0;
 
@@ -643,7 +644,7 @@ namespace ONIModLauncher
 							modListItem.label.distribution_platform = DistributionPlatform.Dev;
 						}
 
-						modListItem.status = ModStatus.Installed;
+						modListItem.status = mod.Status;
 						modListItem.enabled = false;
 						modListItem.enabledForDlc = new List<string>();
 						if (mod.enabledForVanilla)

@@ -42,6 +42,10 @@ namespace ONIModLauncher.Configs
 
 			string json = File.ReadAllText(file);
 			var list = JsonConvert.DeserializeObject<ModConfigJson>(json);
+			ModManager.Instance.Settings.ApplyPendingToggleChanges(list, out bool hadToggles);
+			if (hadToggles) //resave changes
+				Save(list, GamePaths.ModsConfigFile);
+
 			return list;
 		}
 

@@ -146,8 +146,8 @@
                                         <Label Foreground="White" VerticalAlignment="Center" Visibility="{Binding IsLocal, Mode=OneWay, Converter={StaticResource BoolToVis}}">[local]</Label>
                                         <Label Foreground="White" VerticalAlignment="Center" Visibility="{Binding IsDev, Mode=OneWay, Converter={StaticResource BoolToVis}}">[dev]</Label>
                                         <Label Foreground="White" VerticalAlignment="Center" Visibility="{Binding KeepEnabled, Mode=OneWay, Converter={StaticResource BoolToVis}}">[keep]</Label>
-                                        <Label Foreground="White" VerticalAlignment="Center" Visibility="{Binding IsBroken, Mode=OneWay, Converter={StaticResource BoolToVis}}">[broken]</Label>
-                                        <Label Foreground="White" VerticalAlignment="Center" Visibility="{Binding ParsedLegacyCompatibility, Mode=OneWay, Converter={StaticResource BoolToVis}}">[old yaml]</Label>
+										<Label Foreground="White" VerticalAlignment="Center" Visibility="{Binding IsBroken, Mode=OneWay, Converter={StaticResource BoolToVis}}">[broken]</Label>
+										<Label Foreground="White" VerticalAlignment="Center" Visibility="{Binding ParsedLegacyCompatibility, Mode=OneWay, Converter={StaticResource BoolToVis}}">[old yaml]</Label>
 
                                     </StackPanel>
 
@@ -183,8 +183,11 @@
                                 <Border.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Toggle Keep" Click="ToggleKeepEnabledMenuItem_OnClick"/>
-                                        <MenuItem Header="Toggle Broken" Click="ToggleBrokenMenuItem_OnClick"></MenuItem>
-                                        <MenuItem Header="Move to Top"
+										<MenuItem Header="Toggle Broken" Click="ToggleBrokenMenuItem_OnClick"></MenuItem>
+										<MenuItem Header="Toggle Pending"
+                                                  IsEnabled="{Binding IsNotEditable}"
+                                                  Click="TogglePendingMenuItem_OnClick"/>
+										<MenuItem Header="Move to Top"
                                                   IsEnabled="{Binding IsEditable}"
                                                   Click="MoveToTopMenuItem_OnClick"/>
                                         <MenuItem Header="Move to Bottom"

@@ -79,5 +79,5 @@ namespace ONIModLauncher
 		{
 			ModBrowserWindow.Instance.Show();
 		}
-	}
+    }
 }

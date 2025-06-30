@@ -184,12 +184,18 @@
                                     <ContextMenu>
                                         <MenuItem Header="Toggle Keep" Click="ToggleKeepEnabledMenuItem_OnClick"/>
                                         <MenuItem Header="Toggle Broken" Click="ToggleBrokenMenuItem_OnClick"></MenuItem>
+                                        <Separator/>
                                         <MenuItem Header="Move to Top"
                                                   IsEnabled="{Binding IsEditable}"
                                                   Click="MoveToTopMenuItem_OnClick"/>
                                         <MenuItem Header="Move to Bottom"
                                                   IsEnabled="{Binding IsEditable}"
                                                   Click="MoveToBottomMenuItem_OnClick"/>
+                                        <Separator/>
+                                        <MenuItem Header="Convert to Local"
+                                                  Visibility="{Binding IsSteam, Converter={StaticResource BoolToVis}}"
+                                                  IsEnabled="{Binding IsEditable}"
+                                                  Click="ConvertToLocalMenuItem_OnClick"/>
                                     </ContextMenu>
                                 </Border.ContextMenu>
                             </Border>

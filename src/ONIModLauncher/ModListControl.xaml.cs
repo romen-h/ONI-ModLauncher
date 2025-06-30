@@ -213,5 +213,14 @@ namespace ONIModLauncher
 			warningAcknowledged = true;
 			modListLockScreen.Visibility = Visibility.Collapsed;
 		}
+
+		private void ConvertToLocalMenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			MenuItem mi = sender as MenuItem;
+			if (mi.DataContext is ONIMod mod)
+			{
+				ModManager.Instance.ConvertToLocal(mod);
+			}
+		}
 	}
 }

@@ -405,6 +405,7 @@ namespace ONIModLauncher
 				{
 					if (modInfo.forbiddenDlcIds.Contains(DLC.SpacedOut))
 					{
+						// Vanilla already compatible
 						mod.SetCompatibility(DLC.SpacedOut, Compatibility.Incompatible);
 					}
 					if (modInfo.forbiddenDlcIds.Contains(DLC.FrostyPlanetPack))
@@ -420,6 +421,7 @@ namespace ONIModLauncher
 				{
 					if (modInfo.requiredDlcIds.Contains(DLC.SpacedOut))
 					{
+						mod.SetCompatibility(DLC.Vanilla, Compatibility.Incompatible);
 						mod.SetCompatibility(DLC.SpacedOut, Compatibility.Required);
 					}
 					if (modInfo.requiredDlcIds.Contains(DLC.FrostyPlanetPack))
@@ -452,7 +454,6 @@ namespace ONIModLauncher
 				if (metadata.RepoURL != null)
 				{
 					mod.RepoURL = new Uri(metadata.RepoURL);
-					mod.RepoIsGithub = mod.RepoURL.Host == "github.com";
 				}
 			}
 
@@ -667,6 +668,39 @@ namespace ONIModLauncher
 			{
 				Debug.Fail(ex.ToString());
 			}
+		}
+
+		public void ConvertToLocal(ONIMod mod)
+		{
+			// Copy content to new folder
+			string sourceModFolder = mod.Folder;
+			string fileSafeStaticID = mod.StaticID.ToFileSafeString();
+			string destModFolder = Path.Combine(GamePaths.LocalModsFolder, fileSafeStaticID);
+			Directory.CreateDirectory(destModFolder);
+			ShellHelper.CopyDirectory(sourceModFolder, destModFolder, true);
+
+			// Create clone of mod
+			ONIMod newMod = mod.Clone();
+			newMod.Folder = destModFolder;
+			newMod.KeepEnabled = mod.KeepEnabled;
+			newMod.IsBroken = false;
+			newMod.Type = ModType.Local;
+
+			// Add new ONIMod to collection
+			int indexOfSource = Mods.IndexOf(mod);
+			if (indexOfSource >= 0)
+			{
+				Mods.Insert(indexOfSource + 1, newMod);
+			}
+
+			// Enable new mod
+			if (mod.Enabled)
+			{
+				newMod.Enabled = true;
+				mod.Enabled = false;
+			}
+
+			SaveModList();
 		}
 	}
 

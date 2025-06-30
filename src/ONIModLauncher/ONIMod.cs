@@ -65,6 +65,9 @@ namespace ONIModLauncher
 
 		public string UniqueKey => $"{Type}.{ID}";
 
+		public string Folder
+		{ get; set; }
+
 		public string ID
 		{ get; set; }
 
@@ -86,8 +89,7 @@ namespace ONIModLauncher
 		public Uri RepoURL
 		{ get; set; }
 
-		public bool RepoIsGithub
-		{ get; set; }
+		public bool RepoIsGithub => RepoURL?.Host.ToLowerInvariant() == "github.com";
 
 		public ModType Type
 		{ get; set; }
@@ -97,9 +99,6 @@ namespace ONIModLauncher
 		public bool IsLocal => Type == ModType.Local;
 
 		public bool IsDev => Type == ModType.Dev;
-
-		public string Folder
-		{ get; set; }
 
 		public int CrashCount
 		{ get; set; }
@@ -152,6 +151,7 @@ namespace ONIModLauncher
 				{
 					enabledForVanilla = value;
 				}
+				InvokePropertyChanged(nameof(Enabled));
 			}
 		}
 
@@ -258,6 +258,24 @@ namespace ONIModLauncher
 		internal void SetCompatibility(string dlc, Compatibility compat)
 		{
 			_compatibilities[dlc] = compat;
+		}
+
+		public ONIMod Clone()
+		{
+			ONIMod clone = new ONIMod();
+			clone.Folder = Folder;
+			clone.ID = ID;
+			clone.StaticID = StaticID;
+			clone.Title = Title;
+			clone.TitleColor = TitleColor;
+			clone.Version = Version;
+			clone.Author = Author;
+			clone.RepoURL = RepoURL;
+			clone.Type = Type;
+			clone.CrashCount = CrashCount;
+			clone.ParsedLegacyCompatibility = ParsedLegacyCompatibility;
+
+			return clone;
 		}
 	}
 }

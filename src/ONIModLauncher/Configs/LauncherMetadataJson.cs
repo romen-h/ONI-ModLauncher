@@ -13,6 +13,20 @@ namespace ONIModLauncher.Configs
 	public class LauncherMetadataJson : ConfigBase
 	{
 		/// <summary>
+		/// The version number of the currently installed mod.
+		/// </summary>
+		[JsonProperty(Required = Required.Always)]
+		public Version Version
+		{ get; set; }
+
+		/// <summary>
+		/// A URL that leads to an UpdateIndexJson object on the internet that announces new versions of mods to download.
+		/// </summary>
+		[JsonProperty]
+		public string UpdateIndexURL
+		{ get; set; } = null;
+
+		/// <summary>
 		/// The author(s) that created the mod.
 		/// </summary>
 		[JsonProperty(DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]

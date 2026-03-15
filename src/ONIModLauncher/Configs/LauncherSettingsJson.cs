@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 namespace ONIModLauncher.Configs
 {
 	[JsonObject(MemberSerialization.OptIn)]
-	public class LauncherSettingsJson : ConfigBase
+	public class LauncherSettingsJson : JsonConfig<LauncherSettingsJson>
 	{
 		[JsonProperty]
 		public HashSet<string> BrokenMods
@@ -45,10 +45,5 @@ namespace ONIModLauncher.Configs
 		[JsonProperty]
 		public Dictionary<string,int> CustomModSorting
 		{ get; private set; } = new Dictionary<string, int>();
-
-		public LauncherSettingsJson()
-		{
-
-		}
 	}
 }

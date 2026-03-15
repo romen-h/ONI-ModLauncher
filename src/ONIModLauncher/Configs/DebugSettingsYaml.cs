@@ -7,23 +7,19 @@ using System.Text;
 using System.Threading.Tasks;
 
 using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
 namespace ONIModLauncher.Configs
 {
-	public class DebugSettingsYaml : ConfigBase
+	public class DebugSettingsYaml : YamlConfig<DebugSettingsYaml>
 	{
-		[YamlIgnore]
-		private string filePath;
+		[YamlMember(Alias = "debugEnable")]
+		public bool debugEnable = false;
 
-		[YamlMember]
-		public bool debugEnable;
+		[YamlMember(Alias = "developerDebugEnable")]
+		public bool developerDebugEnable = false;
 
-		[YamlMember]
-		public bool developerDebugEnable;
-
-		[YamlMember]
-		public bool autoResumeGame;
+		[YamlMember(Alias = "autoResumeGame")]
+		public bool autoResumeGame = false;
 
 		[YamlIgnore]
 		public bool EnableDebug
@@ -34,7 +30,6 @@ namespace ONIModLauncher.Configs
 				if (debugEnable != value)
 				{
 					debugEnable = value;
-					Save();
 					InvokePropertyChanged(nameof(EnableDebug));
 				}
 			}
@@ -49,40 +44,9 @@ namespace ONIModLauncher.Configs
 				if (autoResumeGame != value)
 				{
 					autoResumeGame = value;
-					Save();
 					InvokePropertyChanged(nameof(AutoResumeLastSave));
 				}
 			}
-		}
-
-		public DebugSettingsYaml()
-		{
-			debugEnable = false;
-			developerDebugEnable = false;
-			autoResumeGame = false;
-		}
-
-		public static DebugSettingsYaml Load(string file)
-		{
-			if (!File.Exists(file)) return new DebugSettingsYaml() { filePath = file };
-
-			string yaml = File.ReadAllText(file);
-
-			var deserializer = new DeserializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).IgnoreUnmatchedProperties().Build();
-			var s = deserializer.Deserialize<DebugSettingsYaml>(yaml);
-			s.filePath = file;
-
-			return s;
-		}
-
-		public void Save()
-		{
-			if (filePath == null) return;
-
-			var serializer = new SerializerBuilder().Build();
-			string yaml = serializer.Serialize(this);
-
-			File.WriteAllText(filePath, yaml);
 		}
 	}
 }

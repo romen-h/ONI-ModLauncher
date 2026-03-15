@@ -50,5 +50,34 @@ namespace ONIModLauncher
 			return Binding.DoNothing;
 		}
 	}
+	
+	public class NegateConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			switch (value)
+			{
+				case int intValue:
+					return -intValue;
+				case double doubleValue:
+					return -doubleValue;
+				default:
+					return Binding.DoNothing;
+			}
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			switch (value)
+			{
+				case int intValue:
+					return -intValue;
+				case double doubleValue:
+					return -doubleValue;
+				default:
+					return Binding.DoNothing;
+			}
+		}
+	}
 
 }

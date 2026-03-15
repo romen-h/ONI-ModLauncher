@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -77,6 +78,11 @@ namespace ONIModLauncher
 			view.Refresh();
 		}
 
+		private void DetectModsButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			
+		}
+
 		private void selectAllModsButton_Click(object sender, RoutedEventArgs e)
 		{
 			ModManager.Instance.EnableAllMods();
@@ -108,6 +114,52 @@ namespace ONIModLauncher
 			{
 				ModManager.Instance.LoadModList(dlg.FileName);
 			}
+		}
+
+		private void InstallModUpdaterMenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			var owner = Window.GetWindow(this);
+			if (MessageBox.Show(owner, "This option will download/update Mod Updater to the latest version from Peter Han's GitHub repo and install it as a Local mod.\nDo you want to continue?", "Download Mod Updater", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+
+			Task.Run(async () => {
+				try
+				{
+					string modFolder = System.IO.Path.Combine(GamePaths.LocalModsFolder, "ModUpdateDate");
+					await ModManager.Instance.InstallModFromURL(ModUpdateUrls.PeterHan_ModUpdater, modFolder, null, "ModUpdateDate");
+					Dispatcher.Invoke(() =>
+					{
+						MessageBox.Show(owner, "Mod Updater successfully installed.", "Update Success", MessageBoxButton.OK);
+					});
+				}
+				catch (Exception ex)
+				{
+					Dispatcher.Invoke(() =>
+					{
+						MessageBox.Show(owner, $"Failed to update mod.\n{ex.Message}", "Update Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+					});
+				}
+			});
+		}
+
+		private void RebuildModsListMenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			var owner = Window.GetWindow(this);
+			if (MessageBox.Show(owner, "Are you sure you want to rebuild the mods list and overwrite the mods.json?", "Rebuild Mods List?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+
+			try
+			{
+				ModManager.Instance.RebuildModList();
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine("Failed to rebuild mods list:");
+				Debug.WriteLine(ex.ToString());
+				MessageBox.Show(owner, "Failed to rebuild mods list.\nYou may need to run the game to generate mods.json again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
+
+			CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(modsList.ItemsSource);
+			view.Filter = FilterMethod;
+			view.Refresh();
 		}
 
 		private void SearchBox_OnTextChanged(object sender, TextChangedEventArgs e)
@@ -154,10 +206,10 @@ namespace ONIModLauncher
 			string searchText = searchBox.Text;
 			if (string.IsNullOrEmpty(searchText)) return true;
 
-			bool titleMatched = mod.Title.ToLowerInvariant().Contains(searchText.ToLowerInvariant());
-			//bool authorMatched = mod.Author?.ToLowerInvariant().Contains(searchText.ToLowerInvariant()) ?? false;
+			if (mod.Title.ToLowerInvariant().Contains(searchText.ToLowerInvariant())) return true;
+			if (mod.FolderName.ToLowerInvariant().Contains(searchText.ToLowerInvariant())) return true;
 
-			return titleMatched;
+			return false;
 		}
 
 		private void ToggleKeepEnabledMenuItem_OnClick(object sender, RoutedEventArgs e)
@@ -221,6 +273,32 @@ namespace ONIModLauncher
 			{
 				ModManager.Instance.ConvertToLocal(mod);
 			}
+		}
+
+		private async void UpdateModMenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			MenuItem mi = sender as MenuItem;
+			if (mi.DataContext is not ONIMod mod) return;
+			
+			string updateUrl = "";
+
+			try
+			{
+				await ModManager.Instance.InstallModFromURL(updateUrl, mod.Folder, mod.StaticID);
+			}
+			catch (Exception ex)
+			{
+				Window owner = Window.GetWindow(this);
+				MessageBox.Show(owner, $"Failed to update mod.\n{ex.Message}", "Update Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
+		}
+
+		private void GenerateModYamlMenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			MenuItem mi = sender as MenuItem;
+			if (mi.DataContext is not ONIMod mod) return;
+			
+			mod.WriteModYaml();
 		}
 	}
 }

@@ -11,32 +11,26 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace ONIModLauncher.Configs
 {
-	public class KPlayerPrefsYaml : ConfigBase
+	public class KPlayerPrefsYaml : YamlConfig<KPlayerPrefsYaml>
 	{
 		private const string PlayShortOnLaunchKey = @"PlayShortOnLaunch";
 		private const string SaveFilenameKey = @"SaveFilenameKey/";
-
 		private const string ResolutionWidthKey = @"ResolutionWidth";
 		private const string ResolutionHeightKey = @"ResolutionHeight";
 		private const string RefreshRateKey = @"RefreshRate";
 		private const string FullScreenKey = @"FullScreen";
 		private const string Expansion1EnabledKey = @"EXPANSION1_ID.ENABLED";
-
 		private const string UIScalePrefKey = @"UIScalePref";
 
-		private string filePath;
-
-		private bool configured = false;
-
-		[YamlMember]
+		[YamlMember(Alias = "strings")]
 		public Dictionary<string, string> strings
 		{ get; set; } = new Dictionary<string, string>();
 
-		[YamlMember]
+		[YamlMember(Alias = "ints")]
 		public Dictionary<string, int> ints
 		{ get; set; } = new Dictionary<string, int>();
 
-		[YamlMember]
+		[YamlMember(Alias = "floats")]
 		public Dictionary<string, float> floats
 		{ get; set; } = new Dictionary<string, float>();
 
@@ -47,7 +41,6 @@ namespace ONIModLauncher.Configs
 			set
 			{
 				strings[SaveFilenameKey] = value;
-				Save();
 				InvokePropertyChanged(nameof(SaveFile));
 			}
 		}
@@ -59,7 +52,6 @@ namespace ONIModLauncher.Configs
 			set
 			{
 				ints[ResolutionWidthKey] = value;
-				Save();
 				InvokePropertyChanged(nameof(ResolutionWidth));
 			}
 		}
@@ -71,7 +63,6 @@ namespace ONIModLauncher.Configs
 			set
 			{
 				ints[ResolutionHeightKey] = value;
-				Save();
 				InvokePropertyChanged(nameof(ResolutionHeight));
 			}
 		}
@@ -83,7 +74,6 @@ namespace ONIModLauncher.Configs
 			set
 			{
 				ints[RefreshRateKey] = value;
-				Save();
 				InvokePropertyChanged(nameof(RefreshRateKey));
 			}
 		}
@@ -95,7 +85,6 @@ namespace ONIModLauncher.Configs
 			set
 			{
 				ints[FullScreenKey] = value ? 1 : 0;
-				Save();
 				InvokePropertyChanged(nameof(FullScreen));
 			}
 		}
@@ -107,7 +96,6 @@ namespace ONIModLauncher.Configs
 			set
 			{
 				ints[Expansion1EnabledKey] = value ? 1 : 0;
-				Save();
 				InvokePropertyChanged(nameof(SpacedOutEnabled));
 			}
 		}
@@ -119,7 +107,6 @@ namespace ONIModLauncher.Configs
 			set
 			{
 				floats[UIScalePrefKey] = value;
-				Save();
 				InvokePropertyChanged(nameof(UIScale));
 			}
 		}
@@ -136,37 +123,6 @@ namespace ONIModLauncher.Configs
 			RefreshRate = 60;
 			FullScreen = true;
 			SpacedOutEnabled = false;
-
-			configured = true;
-		}
-
-		public static KPlayerPrefsYaml Load(string file)
-		{
-			if (!File.Exists(file)) return new KPlayerPrefsYaml()
-			{
-				filePath = file
-			};
-
-			string yaml = File.ReadAllText(file);
-
-			var deserializer = new DeserializerBuilder().IgnoreUnmatchedProperties().Build();
-			var s = deserializer.Deserialize<KPlayerPrefsYaml>(yaml);
-			s.filePath = file;
-
-			return s;
-		}
-
-		private static readonly UTF8Encoding encoding = new UTF8Encoding(false);
-
-		public void Save()
-		{
-			if (!configured) return;
-			if (filePath == null) return;
-
-			var serializer = new SerializerBuilder().Build();
-			string yaml = serializer.Serialize(this);
-
-			File.WriteAllText(filePath, yaml, encoding);
 		}
 	}
 }

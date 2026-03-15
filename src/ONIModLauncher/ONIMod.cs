@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
+using ONIModLauncher.Common.Configs;
 using ONIModLauncher.Configs;
 
 namespace ONIModLauncher
@@ -14,7 +16,7 @@ namespace ONIModLauncher
 	{
 		private static readonly Dictionary<string, string> s_SortingBiases = new Dictionary<string, string>()
 		{
-			{ "2018291283", "0000" }, // Mod Updater
+			{ "PeterHan.ModUpdateDate", "0000"}, // Mod Updater
 			{ "2854869130", "0001" }, // Mod Profile Manager
 			{ "3281716506", "0002" }, // Mod Preset Manager
 			{ "1967921388", "0003" }, // Stock Bug Fix
@@ -31,48 +33,55 @@ namespace ONIModLauncher
 		{
 			InvokePropertyChanged(null);
 		}
+		
+		public string UniqueKey => $"{Type}.{DistributionId}";
 
 		public string SortingIndex
 		{
 			get
 			{
-				if (s_SortingBiases.TryGetValue(ID, out string sortPrefix))
+				if (s_SortingBiases.TryGetValue(StaticID, out string sortPrefix))
 				{
-					return $"0_{sortPrefix}.{ID}";
+					return $"0_{sortPrefix}.{StaticID}";
 				}
 				else if (ModManager.Instance.Settings.KeepEnabled.Contains(UniqueKey))
 				{
-					return $"1_{ID}";
+					return $"1_{StaticID}";
 				}
 				else if (IsDev)
 				{
-					return $"2_{ID}";
+					return $"2_{StaticID}";
 				}
 				else if (IsLocal)
 				{
-					return $"3_{ID}";
+					return $"3_{StaticID}";
 				}
 				else if (IsBroken)
 				{
-					return $"5_{ID}";
+					return $"5_{StaticID}";
 				}
 				else
 				{
-					return $"4_{ID}";
+					return $"4_{StaticID}";
 				}
 			}
 		}
 
-		public string UniqueKey => $"{Type}.{ID}";
-
 		public string Folder
 		{ get; set; }
+		
+		public string FolderName => Path.GetFileName(Folder);
 
-		public string ID
+		public string DistributionId
 		{ get; set; }
 
 		public string StaticID
 		{ get; set; }
+		
+		public Version Version
+		{ get; set; }
+		
+		public string VersionStr => Version?.ToString() ?? "(Unknown Version)";
 
 		public string Title
 		{ get; set; }
@@ -80,27 +89,50 @@ namespace ONIModLauncher
 		public Color TitleColor
 		{ get; set; } = Colors.White;
 
-		public DateTimeOffset Version
-		{ get; set; }
+		public string? Author => LauncherData?.Authors?.FirstOrDefault()?.Name;
 
-		public string Author
-		{ get; set; }
+		public string? RepoUrl => LauncherData?.Authors?.FirstOrDefault()?.RepoUrl;
 
-		public Uri RepoURL
+		public bool RepoIsGithub
 		{ get; set; }
-
-		public bool RepoIsGithub => RepoURL?.Host.ToLowerInvariant() == "github.com";
 
 		public ModType Type
 		{ get; set; }
 
 		public bool IsSteam => Type == ModType.Steam;
 
+		public ulong? SteamWorkshopId
+		{ get; set; }
+		
+		public long SteamUpdateTimestamp
+		{ get; set; }
+		
 		public bool IsLocal => Type == ModType.Local;
 
 		public bool IsDev => Type == ModType.Dev;
 
+		public DistributionPlatform DistributionPlatform
+		{
+			get
+			{
+				switch (Type)
+				{
+					case ModType.Steam:
+						return DistributionPlatform.Steam;
+					case ModType.Local:
+						return DistributionPlatform.Local;
+					case ModType.Dev:
+						return DistributionPlatform.Dev;
+					default:
+						throw new NotImplementedException("Unsupported ModType enum value.");
+				}
+			}
+		}
+		
 		public int CrashCount
+		{ get; set; }
+		
+		public bool HasModYaml
 		{ get; set; }
 
 		public bool HasConfig => ConfigFile != null;
@@ -152,6 +184,7 @@ namespace ONIModLauncher
 					enabledForVanilla = value;
 				}
 				InvokePropertyChanged(nameof(Enabled));
+				ModManager.Instance.RecountEnabledMods();
 			}
 		}
 
@@ -212,8 +245,20 @@ namespace ONIModLauncher
 
 		public LauncherMetadataJson LauncherData
 		{ get; set; }
+		
+		public bool HasAuthors => (LauncherData?.Authors?.Length ?? 0) > 0;
+		
+		public string AllAuthors => string.Join(", ", LauncherData?.Authors?.Select(a => a.Name) ?? []);
 
 		public bool IsEditable => !Launcher.Instance.IsRunning;
+		
+		public bool CanUpdate => IsLocal && HasUpdateUrl && IsUpdatePending;
+		
+		public bool HasUpdateUrl
+		{ get; private set; }
+		
+		public bool IsUpdatePending
+		{ get; private set; }
 
 		public ICommand OpenConfigCommand
 		{ get; private set; }
@@ -235,13 +280,13 @@ namespace ONIModLauncher
 			);
 
 			OpenWorkshopCommand = new BasicActionCommand(
-				(param) => ShellHelper.OpenURL($"https://steamcommunity.com/sharedfiles/filedetails/?id={ID}"),
+				(param) => ShellHelper.OpenURL($"https://steamcommunity.com/sharedfiles/filedetails/?id={SteamWorkshopId}"),
 				(param) => IsSteam
 			);
 
 			OpenRepoCommand = new BasicActionCommand(
-				(param) => ShellHelper.OpenURL(RepoURL.ToString()),
-				(param) => RepoURL != null
+				(param) => ShellHelper.OpenURL(RepoUrl),
+				(param) => RepoUrl != null
 			);
 
 			OpenFolderCommand = new BasicActionCommand(
@@ -259,23 +304,29 @@ namespace ONIModLauncher
 		{
 			_compatibilities[dlc] = compat;
 		}
-
-		public ONIMod Clone()
+		
+		public void WriteModYaml()
 		{
-			ONIMod clone = new ONIMod();
-			clone.Folder = Folder;
-			clone.ID = ID;
-			clone.StaticID = StaticID;
-			clone.Title = Title;
-			clone.TitleColor = TitleColor;
-			clone.Version = Version;
-			clone.Author = Author;
-			clone.RepoURL = RepoURL;
-			clone.Type = Type;
-			clone.CrashCount = CrashCount;
-			clone.ParsedLegacyCompatibility = ParsedLegacyCompatibility;
-
-			return clone;
+			ModYaml data = new ModYaml()
+			{
+				staticID = StaticID,
+				description = "",
+				title = Title
+			};
+			
+			string file = Path.Combine(Folder, "mod.yaml");
+			if (ModYaml.Save(file, data))
+			{
+				HasModYaml = true;
+				InvokePropertyChanged(nameof(HasModYaml));
+			}
+		}
+		
+		internal void SetUpdateStatus(bool updateFound)
+		{
+			IsUpdatePending = updateFound;
+			InvokePropertyChanged(nameof(IsUpdatePending));
+			InvokePropertyChanged(nameof(CanUpdate));
 		}
 	}
 }

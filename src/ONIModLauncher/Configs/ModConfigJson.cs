@@ -30,11 +30,21 @@ namespace ONIModLauncher.Configs
 	[JsonObject(MemberSerialization.Fields)]
 	public class ModConfigJson
 	{
+		public const int CURRENT_SCHEMA_VERSION = 1;
+		
+		/// <summary>
+		/// The mods list schema version.
+		/// </summary>
 		[JsonProperty("version")]
-		public int version;
+		[JsonRequired]
+		public required int version = CURRENT_SCHEMA_VERSION;
 
+		/// <summary>
+		/// The list of installed mods.
+		/// </summary>
 		[JsonProperty("mods")]
-		public ObservableCollection<ModConfigItem> mods = new ObservableCollection<ModConfigItem>();
+		[JsonRequired]
+		public required ObservableCollection<ModConfigItem> mods = new ObservableCollection<ModConfigItem>();
 
 		public static ModConfigJson Load(string file)
 		{
@@ -55,21 +65,84 @@ namespace ONIModLauncher.Configs
 	[JsonObject(MemberSerialization.Fields)]
 	public class ModConfigItem
 	{
-		public ModConfigLabel label;
-		public ModStatus status;
-		public bool enabled;
-		public List<string> enabledForDlc;
-		public int crash_count;
-		public string reinstall_path;
-		public string staticID;
+		/// <summary>
+		/// The static ID for the mod.
+		/// </summary>
+		[JsonProperty("staticID")]
+		[JsonRequired]
+		public required string staticID;
+
+		/// <summary>
+		/// Describes platform information about the mod.
+		/// </summary>
+		[JsonProperty("label")]
+		[JsonRequired]
+		public required ModConfigLabel label;
+
+		/// <summary>
+		/// The current installation status of the mod.
+		/// </summary>
+		[JsonProperty("status")]
+		[JsonRequired]
+		public required ModStatus status;
+
+		/// <summary>
+		/// Deprecated toggle for enabling the mod in vanilla ONI.
+		/// </summary>
+		[JsonProperty("enabled")]
+		[JsonRequired]
+		public required bool enabled = false;
+
+		/// <summary>
+		/// A list of DLC ids that the mod is enabled for.
+		/// </summary>
+		[JsonProperty("enabledForDlc", NullValueHandling = NullValueHandling.Include)]
+		public required List<string> enabledForDlc = [];
+
+		/// <summary>
+		/// The number of times the mod has been blamed for a crash.
+		/// </summary>
+		[JsonProperty("crash_count")]
+		[JsonRequired]
+		public required int crash_count = 0;
+
+		/// <summary>
+		/// Unknown purpose.
+		/// </summary>
+		[JsonProperty("reinstall_path", NullValueHandling = NullValueHandling.Include)]
+		public string? reinstall_path = null;
 	}
 
 	[JsonObject(MemberSerialization.Fields)]
 	public class ModConfigLabel
 	{
-		public DistributionPlatform distribution_platform;
-		public string id;
-		public string title;
-		public long version;
+		/// <summary>
+		/// Describes how the mod was installed, and which mods folder it belongs in.
+		/// </summary>
+		[JsonProperty("distribution_platform")]
+		[JsonRequired]
+		public required DistributionPlatform distribution_platform;
+
+		/// <summary>
+		/// The platform ID of the mod.
+		/// This is usually the folder name for the mod.
+		/// </summary>
+		[JsonProperty("id")]
+		[JsonRequired]
+		public required string id;
+
+		/// <summary>
+		/// The display name of the mod.
+		/// </summary>
+		[JsonProperty("title")]
+		[JsonRequired]
+		public required string title;
+
+		/// <summary>
+		/// A unix timestamp in seconds representing when the mod was published.
+		/// </summary>
+		[JsonProperty("version")]
+		[JsonRequired]
+		public required long version;
 	}
 }

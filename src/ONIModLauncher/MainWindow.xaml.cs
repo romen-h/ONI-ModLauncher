@@ -35,6 +35,10 @@ namespace ONIModLauncher
 		{
 			AppSettings.Init();
 			SteamIntegration.Instance.Init();
+			if (SteamIntegration.Instance.InitError != null)
+			{
+				MessageBox.Show(Window.GetWindow(this), SteamIntegration.Instance.InitError, "Steam Initialization Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+			}
 
 			if (GamePaths.Init())
 			{

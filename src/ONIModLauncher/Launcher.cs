@@ -110,11 +110,15 @@ namespace ONIModLauncher
 
 		private void PlayerPrefs_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			KPlayerPrefsYaml.Save(GamePaths.PlayerPrefsFile, PlayerPrefs);
+			
 			InvokePropertyChanged(nameof(PlayerPrefs));
 		}
 
 		private void DebugPrefs_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			DebugSettingsYaml.Save(GamePaths.DebugSettingsFile, DebugPrefs);
+			
 			InvokePropertyChanged(nameof(DebugPrefs));
 		}
 

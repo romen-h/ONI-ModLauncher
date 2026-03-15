@@ -99,5 +99,38 @@ namespace ONIModLauncher
 				}
 			}
 		}
+		
+		public static void ClearDirectory(string dir)
+		{
+			foreach (string file in Directory.GetFiles(dir))
+			{
+				File.Delete(file);
+			}
+
+			foreach (string folder in Directory.GetDirectories(dir))
+			{
+				Directory.Delete(folder, true);
+			}
+		}
+		
+		public static void ClearDirectoryExceptExtensions(string dir, params string[] extensionsToKeep)
+		{
+			foreach (string file in Directory.GetFiles(dir))
+			{
+				string extension = Path.GetExtension(file);
+				if (extensionsToKeep != null && extensionsToKeep.Length > 0 && extensionsToKeep.Contains(extension)) continue;
+				
+				File.Delete(file);
+			}
+			
+			foreach (string folder in Directory.GetDirectories(dir))
+			{
+				ClearDirectoryExceptExtensions(folder, extensionsToKeep);
+				if (Directory.GetFiles(folder).Length == 0)
+				{
+					Directory.Delete(folder);
+				}
+			}
+		}
 	}
 }

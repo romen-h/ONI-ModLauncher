@@ -20,7 +20,7 @@ using YamlDotNet.Serialization;
 
 namespace ONIModLauncher
 {
-	public class ModManager : INotifyPropertyChanged
+	public partial class ModManager : INotifyPropertyChanged
 	{
 		private static ModManager s_instance;
 
@@ -46,6 +46,12 @@ namespace ONIModLauncher
 
 		public ObservableCollection<ONIMod> Mods
 		{ get; private set; }
+		
+		public int EnabledModCount => Mods.Count(mod => mod.Enabled);
+		internal void RecountEnabledMods()
+		{
+			InvokePropertyChanged(nameof(EnabledModCount));
+		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		private void InvokePropertyChanged(string propertyName)
@@ -84,40 +90,25 @@ namespace ONIModLauncher
 
 		public void LoadSettings()
 		{
-			Settings = new LauncherSettingsJson();
-
-			if (File.Exists(GamePaths.LauncherSettingsFile))
+			if (Settings != null)
 			{
-				try
-				{
-					string json = File.ReadAllText(GamePaths.LauncherSettingsFile);
-					Settings = JsonConvert.DeserializeObject<LauncherSettingsJson>(json);
-				}
-				catch (Exception ex)
-				{
-					Debug.WriteLine(ex.ToString());
-				}
+				Settings.PropertyChanged -= LauncherConfig_PropertyChanged;
+				Settings = null;
+			}
+			
+			Settings = LauncherSettingsJson.Load(GamePaths.LauncherSettingsFile);
+			
+			if (Settings == null)
+			{
+				Settings = new LauncherSettingsJson();
 			}
 
 			Settings.PropertyChanged += LauncherConfig_PropertyChanged;
 		}
 
-		public void SaveSettings()
-		{
-			try
-			{
-				string json = JsonConvert.SerializeObject(Settings);
-				File.WriteAllText(GamePaths.LauncherSettingsFile, json);
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine(ex.ToString());
-			}
-		}
-
 		private void LauncherConfig_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			SaveSettings();
+			LauncherSettingsJson.Save(GamePaths.LauncherSettingsFile, Settings);
 		}
 
 		public void LoadModList() => LoadModList(GamePaths.ModsConfigFile);
@@ -144,7 +135,7 @@ namespace ONIModLauncher
 							}
 							catch (Exception ex)
 							{
-								//Debug.Fail(ex.ToString());
+								Debug.WriteLine(ex.ToString());
 							}
 						}
 					}
@@ -165,16 +156,21 @@ namespace ONIModLauncher
 		{
 			ctx.Post((state) =>
 			{
+				Mods.Clear();
+				_steamMods.Clear();
+
 				if (modConfig == null)
 				{
 					modConfig = new ModConfigJson()
 					{
-						version = 1
+						version = ModConfigJson.CURRENT_SCHEMA_VERSION,
+						mods = new ObservableCollection<ModConfigItem>()
 					};
 				}
 
 				var deserializer = new DeserializerBuilder().IgnoreUnmatchedProperties().Build();
 
+				// Scan dev mods for ones missing from the mods.json
 				foreach (var modFolder in Directory.GetDirectories(GamePaths.DevModsFolder))
 				{
 					try
@@ -215,6 +211,7 @@ namespace ONIModLauncher
 					}
 				}
 
+				// Scan local mods for ones missing from the mods.json
 				foreach (var modFolder in Directory.GetDirectories(GamePaths.LocalModsFolder))
 				{
 					try
@@ -255,6 +252,7 @@ namespace ONIModLauncher
 					}
 				}
 
+				// Scan steam mods for ones missing from the mods.json
 				if (SteamIntegration.Instance.UseSteam)
 				{
 					foreach (var modFolder in Directory.GetDirectories(GamePaths.SteamModsFolder))
@@ -263,12 +261,30 @@ namespace ONIModLauncher
 						{
 							string folderName = Path.GetFileName(modFolder);
 							ulong id = ulong.Parse(folderName);
+							
+							string staticID = folderName;
+							string title = "(Untitled Mod)";
 
 							string modYamlFile = Path.Combine(modFolder, "mod.yaml");
-							string modYaml = File.ReadAllText(modYamlFile);
-							ModYaml modInfo = deserializer.Deserialize<ModYaml>(modYaml);
+							if (File.Exists(modYamlFile))
+							{
+								string modYaml = File.ReadAllText(modYamlFile);
+								ModYaml modInfo = deserializer.Deserialize<ModYaml>(modYaml);
+								staticID = modInfo.staticID;
+								title = modInfo.title;
+							}
+							else
+							{
+								staticID = $"{folderName}.Steam";
+								
+								var dlls = Directory.GetFiles(modFolder, "*.dll");
+								if (dlls.Length > 0)
+								{
+									title = Path.GetFileNameWithoutExtension(dlls[0]);
+								}
+							}
 
-							ONIMod mod = FindMod(modInfo.staticID);
+							ONIMod mod = FindMod(staticID);
 
 							if (mod == null)
 							{
@@ -278,7 +294,7 @@ namespace ONIModLauncher
 									{
 										distribution_platform = DistributionPlatform.Steam,
 										id = id.ToString(),
-										title = modInfo.title,
+										title = title,
 										version = SteamIntegration.Instance.GetModUpdateTime(id)
 									},
 									status = ModStatus.Installed,
@@ -286,7 +302,7 @@ namespace ONIModLauncher
 									enabledForDlc = new List<string>(),
 									crash_count = 0,
 									reinstall_path = null,
-									staticID = modInfo.staticID
+									staticID = staticID
 								};
 
 								AddMod(modConfig);
@@ -306,19 +322,19 @@ namespace ONIModLauncher
 
 		private void AddMod(ModConfigItem modListItem)
 		{
+			if (modListItem == null) throw new ArgumentNullException(nameof(modListItem));
+			
 			ONIMod mod = new ONIMod();
 
+			if (string.IsNullOrWhiteSpace(modListItem.staticID)) throw new Exception("StaticID is empty.");
 			mod.StaticID = modListItem.staticID;
-
-			ulong steamID = 0;
 
 			if (modListItem.label != null)
 			{
 				ModConfigLabel label = modListItem.label;
 
-				mod.ID = label.id;
+				mod.DistributionId = label.id;
 				mod.Title = label.title;
-				mod.Version = DateTimeOffset.FromUnixTimeSeconds(label.version);
 
 				if (label.distribution_platform == DistributionPlatform.Local) // Local
 				{
@@ -329,7 +345,8 @@ namespace ONIModLauncher
 				{
 					mod.Folder = Path.Combine(GamePaths.SteamModsFolder, label.id);
 					mod.Type = ModType.Steam;
-					steamID = ulong.Parse(label.id);
+					mod.SteamWorkshopId = ulong.Parse(label.id);
+					mod.SteamUpdateTimestamp = label.version;
 				}
 				else if (label.distribution_platform == DistributionPlatform.Dev) // Dev
 				{
@@ -366,11 +383,19 @@ namespace ONIModLauncher
 				throw;
 			}
 
+			string modYamlFile = Path.Combine(mod.Folder, "mod.yaml");
+			mod.HasModYaml = File.Exists(modYamlFile);
+
 			string modInfoYamlFile = Path.Combine(mod.Folder, "mod_info.yaml");
 			ModInfoYaml modInfo = ModInfoYaml.Load(modInfoYamlFile);
 
 			if (modInfo != null)
 			{
+				if (Version.TryParse(modInfo.version, out Version version))
+				{
+					mod.Version = version;
+				}
+				
 				if (modInfo.supportedContent != null)
 				{
 					string supported = modInfo.supportedContent.ToUpperInvariant();
@@ -445,41 +470,42 @@ namespace ONIModLauncher
 				mod.enabledForSpacedOut = modListItem.enabledForDlc.Contains(DLC.SpacedOut);
 			}
 
-			string modMetadataFile = Path.Combine(mod.Folder, "LauncherMetadata.json");
-			LauncherMetadataJson metadata = LauncherMetadataJson.Load(modMetadataFile);
+			//string modMetadataFile = Path.Combine(mod.Folder, "LauncherMetadata.json");
+			//mod.LauncherData = LauncherMetadataJson.Load(modMetadataFile);
 
-			if (metadata != null)
+			if (mod.LauncherData != null)
 			{
-				mod.Author = metadata.Author;
-				if (metadata.RepoURL != null)
+#if false
+				if (mod.LauncherData.ConfigFiles != null)
 				{
-					mod.RepoURL = new Uri(metadata.RepoURL);
+					foreach (var configPath in mod.LauncherData.ConfigFiles)
+					{
+						string fullConfigPath = Path.Combine(mod.Folder, configPath.Value);
+						if (File.Exists(fullConfigPath))
+						{
+							mod.ConfigFile = fullConfigPath;
+							break;
+						}
+					}
 				}
+#endif
 			}
 
 			mod.CrashCount = modListItem.crash_count;
 			
-			if (metadata.ConfigFiles != null)
-			{
-				foreach (var configPath in metadata.ConfigFiles)
-				{
-					string fullConfigPath = Path.Combine(mod.Folder, configPath.Value);
-					if (File.Exists(fullConfigPath))
-					{
-						mod.ConfigFile = fullConfigPath;
-						break;
-					}
-				}
-			}
-
 			mod.PropertyChanged += Mod_PropertyChanged;
 
 			Mods.Add(mod);
 
 			if (mod.IsSteam)
 			{
-				_steamMods.Add(steamID, mod);
+				_steamMods[mod.SteamWorkshopId.Value] = mod;
 			}
+		}
+		
+		private void RemoveMod(ONIMod mod)
+		{
+			Mods.Remove(mod);
 		}
 
 		private ONIMod FindMod(string staticID)
@@ -612,62 +638,64 @@ namespace ONIModLauncher
 
 		public void SaveModList(string path)
 		{
-			try
+			ctx.Post((state) =>
 			{
-				ModConfigJson modConfig = new ModConfigJson();
-
-				modConfig.version = this.modConfig.version;
-
-				modConfig.mods = new ObservableCollection<ModConfigItem>();
-
-				foreach (var mod in Mods)
+				try
 				{
-					try
+					ModConfigJson modConfig = new ModConfigJson()
 					{
-						ModConfigItem modListItem = new ModConfigItem();
+						version = this.modConfig.version,
+						mods = new ObservableCollection<ModConfigItem>()
+					};
 
-						modListItem.label = new ModConfigLabel();
-						modListItem.label.id = mod.ID;
-						modListItem.label.title = mod.Title;
-						modListItem.label.version = mod.Version.ToUnixTimeSeconds();
-
-						if (mod.Type == ModType.Local)
-						{
-							modListItem.label.distribution_platform = DistributionPlatform.Local;
-						}
-						else if (mod.Type == ModType.Steam)
-						{
-							modListItem.label.distribution_platform = DistributionPlatform.Steam;
-						}
-						else if (mod.Type == ModType.Dev)
-						{
-							modListItem.label.distribution_platform = DistributionPlatform.Dev;
-						}
-
-						modListItem.status = ModStatus.Installed;
-						modListItem.enabled = false;
-						modListItem.enabledForDlc = new List<string>();
-						if (mod.enabledForVanilla)
-							modListItem.enabledForDlc.Add("");
-						if (mod.enabledForSpacedOut)
-							modListItem.enabledForDlc.Add(DLC.SpacedOut);
-						modListItem.crash_count = mod.CrashCount;
-						modListItem.staticID = mod.StaticID;
-
-						modConfig.mods.Add(modListItem);
-					}
-					catch (Exception ex)
+					foreach (var mod in Mods)
 					{
-						Debug.WriteLine(ex.ToString());
+						try
+						{
+							ModConfigItem modListItem = new ModConfigItem()
+							{
+								staticID = mod.StaticID,
+								label = new ModConfigLabel()
+								{
+									id = mod.DistributionId,
+									title = mod.Title,
+									version = mod.SteamUpdateTimestamp,
+									distribution_platform = mod.DistributionPlatform
+								},
+								status = ModStatus.Installed,
+								enabled = false,
+								enabledForDlc = new List<string>(),
+								crash_count = mod.CrashCount
+							};
+
+							if (mod.Type == ModType.Steam)
+							{
+								modListItem.label.version = mod.SteamUpdateTimestamp;
+							}
+							if (mod.enabledForVanilla)
+							{
+								modListItem.enabledForDlc.Add("");
+							}
+							if (mod.enabledForSpacedOut)
+							{
+								modListItem.enabledForDlc.Add(DLC.SpacedOut);
+							}
+
+							modConfig.mods.Add(modListItem);
+						}
+						catch (Exception ex)
+						{
+							Debug.WriteLine(ex.ToString());
+						}
 					}
+
+					ModConfigJson.Save(modConfig, path);
 				}
-
-				ModConfigJson.Save(modConfig, path);
-			}
-			catch (Exception ex)
-			{
-				Debug.Fail(ex.ToString());
-			}
+				catch (Exception ex)
+				{
+					Debug.Fail(ex.ToString());
+				}
+			}, null);
 		}
 
 		public void ConvertToLocal(ONIMod mod)
@@ -678,28 +706,24 @@ namespace ONIModLauncher
 			string destModFolder = Path.Combine(GamePaths.LocalModsFolder, fileSafeStaticID);
 			Directory.CreateDirectory(destModFolder);
 			ShellHelper.CopyDirectory(sourceModFolder, destModFolder, true);
-
-			// Create clone of mod
-			ONIMod newMod = mod.Clone();
-			newMod.Folder = destModFolder;
-			newMod.KeepEnabled = mod.KeepEnabled;
-			newMod.IsBroken = false;
-			newMod.Type = ModType.Local;
-
-			// Add new ONIMod to collection
-			int indexOfSource = Mods.IndexOf(mod);
-			if (indexOfSource >= 0)
+			
+			ModConfigItem cloneInfo = new ModConfigItem()
 			{
-				Mods.Insert(indexOfSource + 1, newMod);
-			}
-
-			// Enable new mod
-			if (mod.Enabled)
-			{
-				newMod.Enabled = true;
-				mod.Enabled = false;
-			}
-
+				staticID = mod.StaticID,
+				label = new ModConfigLabel()
+				{
+					distribution_platform = DistributionPlatform.Local,
+					id = fileSafeStaticID,
+					title = mod.Title,
+					version = 0
+				},
+				status = ModStatus.Installed,
+				crash_count = 0,
+				enabled = false,
+				enabledForDlc = new List<string>()
+			};
+			
+			AddMod(cloneInfo);
 			SaveModList();
 		}
 	}

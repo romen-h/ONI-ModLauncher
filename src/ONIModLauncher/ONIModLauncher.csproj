@@ -5,6 +5,7 @@
     <TargetFramework>net8.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <Authors>RomenH</Authors>
     <Company />
     <Product>ONI Mod Launcher</Product>
@@ -26,6 +27,13 @@
     <DelaySign>false</DelaySign>
     <ApplicationIcon>Assets/icon.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="publish\**" />
+    <EmbeddedResource Remove="publish\**" />
+    <None Remove="publish\**" />
+    <Page Remove="publish\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Assets\dlc1.jpg" />
@@ -51,6 +59,10 @@
 
   <ItemGroup>
     <Page Include="App.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ONIModLauncher.Common\ONIModLauncher.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

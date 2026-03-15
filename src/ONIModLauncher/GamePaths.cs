@@ -48,6 +48,12 @@ namespace ONIModLauncher
 
 		private const string BIONIC_FLAG_FILE = "OxygenNotIncluded_Data\\StreamingAssets\\dlc3_bundle";
 
+		public static string AppDataFolder
+		{ get; private set; }
+
+		public static string DownloadsFolder
+		{ get; private set; }
+
 		public static string GameExecutablePath
 		{ get; private set; }
 
@@ -122,6 +128,9 @@ namespace ONIModLauncher
 		/// </summary>
 		public static string DevModsFolder
 		{ get; private set; }
+		
+		public static string WorkshopDownloadsFolder
+		{ get; private set; }
 
 		public static bool Init()
 		{
@@ -147,7 +156,14 @@ namespace ONIModLauncher
 
 				GameExecutablePath = AppSettings.Instance.GameExecutablePath;
 			}
+			
+			string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+			AppDataFolder = Path.Combine(appData, "ONIModLauncher");
+			Directory.CreateDirectory(AppDataFolder);
 
+			DownloadsFolder = Path.Combine(AppDataFolder, "Downloads");
+			Directory.CreateDirectory(DownloadsFolder);
+			
 			GameInstallFolder = Path.GetDirectoryName(GameExecutablePath);
 			DebugSettingsFile = Path.Combine(GameInstallFolder, ONI_DEBUG_PREFS_NAME);
 
@@ -191,6 +207,14 @@ namespace ONIModLauncher
 					return false;
 				}
 			}
+			
+			string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+			string oniModLauncherAppData = Path.Combine(localAppData, "ONI Mod Launcher");
+			Directory.CreateDirectory(oniModLauncherAppData);
+			string workshopTempFolder = Path.Combine(oniModLauncherAppData, "Workshop Downloads");
+			Directory.CreateDirectory(workshopTempFolder);
+			
+			WorkshopDownloadsFolder = workshopTempFolder;
 
 			return true;
 		}

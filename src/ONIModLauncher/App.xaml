@@ -4,15 +4,11 @@
              xmlns:local="clr-namespace:ONIModLauncher"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ConvertersDictionary.xaml"/>
                 <ResourceDictionary Source="Theme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-
-            <BooleanToVisibilityConverter x:Key="BoolToVis"/>
-            <local:InverseBooleanToVisibilityConverter x:Key="InvBoolToVis"/>
-            <local:ColorToBrushConverter x:Key="ColorToBrush"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

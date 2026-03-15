@@ -6,11 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
 namespace ONIModLauncher.Configs
 {
-	public class ModInfoYaml
+	public class ModInfoYaml : YamlConfig<ModInfoYaml>
 	{
 		[YamlMember(DefaultValuesHandling = DefaultValuesHandling.OmitNull | DefaultValuesHandling.OmitDefaults)]
 		public string supportedContent = null;
@@ -26,19 +25,5 @@ namespace ONIModLauncher.Configs
 
 		[YamlMember]
 		public string version;
-
-		public ModInfoYaml()
-		{ }
-
-		public static ModInfoYaml Load(string file)
-		{
-			if (!File.Exists(file)) return null;
-
-			string yaml = File.ReadAllText(file);
-			var deserializer = new DeserializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).IgnoreUnmatchedProperties().Build();
-			ModInfoYaml modInfo = deserializer.Deserialize<ModInfoYaml>(yaml);
-
-			return modInfo;
-		}
 	}
 }

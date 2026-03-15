@@ -16,7 +16,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ONIModLauncher
 {
-    class SteamIntegration
+    public class SteamIntegration
     {
 	    public const ulong ONIAppID = 457140;
 
@@ -198,6 +198,8 @@ namespace ONIModLauncher
 
 			ParseWorkshopManifest();
 
+			InitError = null;
+			
 			// TODO: This whole system is currently dysfunctional and bad bad bad
 			//InitContentWatcher();
 		}
@@ -267,7 +269,7 @@ namespace ONIModLauncher
 			var startInfo = new ProcessStartInfo()
 			{
 				FileName = SteamExecutablePath,
-				Arguments = $"+workshop_download_item {ONIAppID} {id}",
+				Arguments = $"-silent +workshop_download_item {ONIAppID} {id}",
 				WindowStyle = ProcessWindowStyle.Hidden,
 				UseShellExecute = false,
 				CreateNoWindow = true
@@ -281,7 +283,7 @@ namespace ONIModLauncher
 			var startInfo = new ProcessStartInfo()
 			{
 				FileName = SteamExecutablePath,
-				Arguments = $"+app_start_validation {ONIAppID}",
+				Arguments = $"-silent +app_start_validation {ONIAppID}",
 				WindowStyle = ProcessWindowStyle.Hidden,
 				UseShellExecute = false,
 				CreateNoWindow = true

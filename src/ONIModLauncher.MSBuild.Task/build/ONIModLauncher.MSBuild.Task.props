@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+
+  <!--Define private properties used for this task.-->
+  <PropertyGroup>
+    <_ONIModLauncher_TaskFolder>$(MSBuildThisFileDirectory)..\tasks\netstandard2.0</_ONIModLauncher_TaskFolder>
+    <_ONIModLauncher_TaskAssembly>$(_ONIModLauncher_TaskFolder)\ONIModLauncher.MSBuild.Task.dll</_ONIModLauncher_TaskAssembly>
+    <_ONIModLauncher_TaskClassName>ONIModLauncher.MSBuild.Task.GenerateLauncherMetadata</_ONIModLauncher_TaskClassName>
+  </PropertyGroup>
+
+  <!--Use the task assembly.-->
+  <UsingTask AssemblyFile="$(_ONIModLauncher_TaskAssembly)"
+             TaskName="$(_ONIModLauncher_TaskClassName)"/>
+
+  <!--Default properties to override in mod projects.-->
+  <PropertyGroup>
+    <GenerateModLauncherMetadata>true</GenerateModLauncherMetadata>
+    <ModStaticId>$(PackageId)</ModStaticId>
+    <SteamWorkshopId></SteamWorkshopId>
+    <ModName>$(AssemblyName)</ModName>
+    <ModLauncherCategory></ModLauncherCategory>
+    <ModLauncherKeywords>$(PackageTags)</ModLauncherKeywords>
+    <ModLauncherUpdateIndexUrl></ModLauncherUpdateIndexUrl>
+    <ModLauncherUpdateNestedPath></ModLauncherUpdateNestedPath>
+  </PropertyGroup>
+
+</Project>

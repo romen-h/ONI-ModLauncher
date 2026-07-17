@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace ONIModLauncher.Common.Configs
+namespace ONIModManager.Common.Configs
 {
 	/// <summary>
 	/// Mod metadata used by ONI Mod Launcher

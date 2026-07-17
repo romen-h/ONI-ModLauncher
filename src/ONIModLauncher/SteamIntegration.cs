@@ -14,7 +14,7 @@ using Gameloop.Vdf.Linq;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
 
-namespace ONIModLauncher
+namespace ONIModManager
 {
     public class SteamIntegration
     {

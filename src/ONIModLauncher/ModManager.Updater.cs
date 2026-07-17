@@ -12,12 +12,11 @@ using System.Threading.Tasks;
 using System.Windows.Automation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using ONIModLauncher.Configs;
-
+using ONIModManager.Configs;
 using static System.Net.WebRequestMethods;
 using File = System.IO.File;
 
-namespace ONIModLauncher
+namespace ONIModManager
 {
 	public partial class ModManager
 	{

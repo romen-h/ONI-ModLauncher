@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 using YamlDotNet.Serialization;
 
-namespace ONIModLauncher.Configs
+namespace ONIModManager.Configs
 {
 	public class DebugSettingsYaml : YamlConfig<DebugSettingsYaml>
 	{

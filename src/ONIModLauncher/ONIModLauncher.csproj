@@ -1,11 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="LibreWPF.Sdk/0.1.0-preview.19">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <UseWindowsForms>true</UseWindowsForms>
-    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <UseWindowsForms>false</UseWindowsForms>
     <Authors>RomenH</Authors>
     <Company />
     <Product>ONI Mod Launcher</Product>
@@ -20,20 +19,12 @@
     <VersionPrefix>$(BuildYear).$(BuildMonth).$(BuildDay).1$(BuildHour)$(BuildMinute)</VersionPrefix>
     <VersionSuffix>beta</VersionSuffix>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
-    <StartupObject>ONIModLauncher.App</StartupObject>
     <RootNamespace>ONIModLauncher</RootNamespace>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>romenh.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
     <ApplicationIcon>Assets/icon.ico</ApplicationIcon>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="publish\**" />
-    <EmbeddedResource Remove="publish\**" />
-    <None Remove="publish\**" />
-    <Page Remove="publish\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Assets\dlc1.jpg" />
@@ -51,14 +42,9 @@
   <ItemGroup>
     <PackageReference Include="Gameloop.Vdf" Version="0.6.2" />
     <PackageReference Include="Gameloop.Vdf.JsonConverter" Version="0.2.1" />
-    <PackageReference Include="gong-wpf-dragdrop" Version="3.2.1" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2365.46" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="YamlDotNet" Version="15.1.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Include="App.xaml" />
   </ItemGroup>
 
   <ItemGroup>

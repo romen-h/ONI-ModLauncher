@@ -17,7 +17,7 @@ using System.Windows.Shapes;
 
 using Microsoft.Win32;
 
-namespace ONIModLauncher
+namespace ONIModManager
 {
 	/// <summary>
 	/// Interaction logic for LauncherSidebarControl.xaml

@@ -13,12 +13,10 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
 using Newtonsoft.Json;
-
-using ONIModLauncher.Configs;
-
+using ONIModManager.Configs;
 using YamlDotNet.Serialization;
 
-namespace ONIModLauncher
+namespace ONIModManager
 {
 	public partial class ModManager : INotifyPropertyChanged
 	{

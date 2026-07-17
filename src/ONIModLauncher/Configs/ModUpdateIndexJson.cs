@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using Newtonsoft.Json;
 
-namespace ONIModLauncher.Configs
+namespace ONIModManager.Configs
 {
 	[JsonObject(MemberSerialization.OptIn)]
 	public sealed class ModUpdateIndexJson

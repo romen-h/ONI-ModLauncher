@@ -7,10 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
-using ONIModLauncher.Common.Configs;
-using ONIModLauncher.Configs;
+using ONIModManager.Common.Configs;
+using ONIModManager.Configs;
 
-namespace ONIModLauncher
+namespace ONIModManager
 {
 	public class ONIMod : INotifyPropertyChanged
 	{
@@ -260,40 +260,24 @@ namespace ONIModLauncher
 		public bool IsUpdatePending
 		{ get; private set; }
 
-		public ICommand OpenConfigCommand
-		{ get; private set; }
+		public bool CanOpenConfig => HasConfig;
+		
+		public void OpenConfigAction() => ShellHelper.OpenTextFile(ConfigFile);
 
-		public ICommand OpenWorkshopCommand
-		{ get; private set; }
+		public bool CanOpenWorkshop => IsSteam;
+		
+		public void OpenWorkshopAction() => ShellHelper.OpenURL($"https://steamcommunity.com/sharedfiles/filedetails/?id={SteamWorkshopId}");
 
-		public ICommand OpenRepoCommand
-		{ get; private set; }
+		public bool CanOpenRepo => RepoUrl != null;
+		
+		public void OpenRepoAction() => ShellHelper.OpenURL(RepoUrl);
+		
+		public bool CanOpenFolder => true;
 
-		public ICommand OpenFolderCommand
-		{ get; private set; }
+		public void OpenFolderAction() => ShellHelper.OpenFolder(Folder);
 
 		public ONIMod()
 		{
-			OpenConfigCommand = new BasicActionCommand(
-				(param) => ShellHelper.OpenTextFile(ConfigFile),
-				(param) => HasConfig
-			);
-
-			OpenWorkshopCommand = new BasicActionCommand(
-				(param) => ShellHelper.OpenURL($"https://steamcommunity.com/sharedfiles/filedetails/?id={SteamWorkshopId}"),
-				(param) => IsSteam
-			);
-
-			OpenRepoCommand = new BasicActionCommand(
-				(param) => ShellHelper.OpenURL(RepoUrl),
-				(param) => RepoUrl != null
-			);
-
-			OpenFolderCommand = new BasicActionCommand(
-				(param) => ShellHelper.OpenFolder(Folder),
-				(param) => true
-			);
-
 			_compatibilities[DLC.Vanilla] = Compatibility.Unknown;
 			_compatibilities[DLC.SpacedOut] = Compatibility.Unknown;
 			_compatibilities[DLC.FrostyPlanetPack] = Compatibility.Unknown;

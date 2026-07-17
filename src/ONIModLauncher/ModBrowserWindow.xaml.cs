@@ -17,7 +17,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using Microsoft.Web.WebView2.Core;
 
-namespace ONIModLauncher
+namespace ONIModManager
 {
     /// <summary>
     /// Interaction logic for ModBrowserWindow.xaml

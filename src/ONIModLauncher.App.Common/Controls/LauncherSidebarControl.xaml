@@ -1,0 +1,77 @@
+﻿<UserControl x:Class="ONIModLauncher.App.Common.Controls.LauncherSidebarControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ONIModLauncher.App.Common.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="300"
+             Loaded="LauncherSidebarControl_OnLoaded">
+    <StackPanel>
+        <Button x:Name="launchButton" Height="82"
+                Style="{StaticResource PinkButton}" FontSize="40"
+                IsEnabled="{Binding Path=CanLaunch}"
+                Click="launchButton_Click">
+            <StackPanel Orientation="Horizontal">
+                <Image Width="50" Margin="10,5" Source="/Assets/launch.png"/>
+                <TextBlock Margin="0,10,0,0" VerticalAlignment="Center">Launch</TextBlock>
+                <Image Width="50"/>
+            </StackPanel>
+        </Button>
+        <CheckBox x:Name="debugModeCheckbox" Height="62"
+                  IsEnabled="{Binding Path=IsNotRunning, FallbackValue=False}"
+                  IsChecked="{Binding DebugEnabled, Mode=TwoWay}">Debug Mode</CheckBox>
+        <local:GroupBox Header="Enabled Content">
+            <StackPanel>
+                <CheckBox x:Name="baseGameCheckbox"
+                          IsEnabled="False"
+                          IsChecked="{Binding Path=HasBaseGame, Mode=OneWay}">
+                    <Border BorderThickness="1" BorderBrush="Black">
+                        <Image Source="/Assets/vanilla.jpg" Height="60"/>
+                    </Border>
+                </CheckBox>
+                <CheckBox x:Name="dlc1Checkbox"
+                          IsEnabled="{Binding Path=CanToggleDLC1, FallbackValue=False}"
+                          IsChecked="{Binding Path=DLC1Enabled, Mode=TwoWay}">
+                    <Border BorderThickness="1" BorderBrush="Black">
+                        <Image Source="/Assets/dlc1.jpg" Height="60"/>
+                    </Border>
+                </CheckBox>
+                <CheckBox x:Name="dlc2Checkbox"
+                          IsEnabled="False"
+                          IsChecked="{Binding Path=HasFrostyPlanetPack, Mode=OneWay}">
+                    <Border BorderThickness="1" BorderBrush="Black">
+                        <Image Source="/Assets/dlc2.jpg" Height="60"/>
+                    </Border>
+                </CheckBox>
+                <CheckBox x:Name="dlc3Checkbox"
+                          IsEnabled="False"
+                          IsChecked="{Binding Path=HasBionicBoosterPack, Mode=OneWay}">
+                    <Border BorderThickness="1" BorderBrush="Black">
+                        <Image Source="/Assets/dlc3.jpg" Height="60"/>
+                    </Border>
+                </CheckBox>
+            </StackPanel>
+        </local:GroupBox>
+        <local:GroupBox Header="Save Management">
+            <StackPanel>
+                <Button x:Name="pickSaveButton" VerticalAlignment="Center" Margin="0,5,0,0" Padding="10"
+                        Style="{StaticResource PinkButton}"
+                        Click="pickSaveButton_Click">Change Current Save File</Button>
+                <CheckBox x:Name="loadLastSaveCheckbox" Height="62"
+                          IsEnabled="{Binding Path=IsNotRunning}"
+                          IsChecked="{Binding Path=DebugPrefs.AutoResumeLastSave}">Skip Main Menu</CheckBox>
+                    
+            </StackPanel>
+        </local:GroupBox>
+        <Button x:Name="modFolderButton" Margin="0,10,0,0" Height="50"
+                Style="{StaticResource BlueButton}" FontSize="20"
+                Click="modFolderButton_Click">&#x1F4C1; Open Mods Folder</Button>
+        <Button x:Name="gameLogButton" Margin="0,10,0,0" Height="50"
+                Style="{StaticResource BlueButton}" FontSize="20"
+                Click="gameLogButton_Click">&#x1F4C3; Open Game Log</Button>
+        <!--<Button x:Name="modBrowserButton" Margin="0,10,0,0" Height="50"
+                Style="{StaticResource BlueButton}" FontSize="20"
+                Click="ModBrowserButton_OnClick">&#x2692; Browse Workshop</Button>-->
+    </StackPanel>
+</UserControl>

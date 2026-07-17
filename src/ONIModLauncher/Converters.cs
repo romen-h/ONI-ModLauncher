@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace ONIModLauncher
+namespace ONIModManager
 {
 	public class InverseBooleanToVisibilityConverter : IValueConverter
 	{

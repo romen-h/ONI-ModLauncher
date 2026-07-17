@@ -6,9 +6,9 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Build.Framework;
-using ONIModLauncher.Common.Configs;
+using ONIModManager.Common.Configs;
 
-namespace ONIModLauncher.MSBuild.Task
+namespace ONIModManager.MSBuild.Task
 {
 	public class GenerateLauncherMetadata : Microsoft.Build.Utilities.Task
 	{

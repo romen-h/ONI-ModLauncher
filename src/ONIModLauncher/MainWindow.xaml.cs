@@ -19,7 +19,7 @@ using Microsoft.Win32;
 
 using Newtonsoft.Json;
 
-namespace ONIModLauncher
+namespace ONIModManager
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml

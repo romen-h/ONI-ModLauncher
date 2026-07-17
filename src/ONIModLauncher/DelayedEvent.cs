@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace ONIModLauncher
+namespace ONIModManager
 {
     public class DelayedEvent
     {

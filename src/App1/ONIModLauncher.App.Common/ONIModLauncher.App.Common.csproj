@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <EnableDefaultItems>false</EnableDefaultItems>
+        <DefineSilverlight>true</DefineSilverlight>
+        <RootNamespace>RomenH.ONIModLauncher.OpenSilver.Core</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="OpenSilver" Version="3.3.3"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ApplicationDefinition Include="App.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </ApplicationDefinition>
+        <Page Include="MainPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="App.xaml.cs"/>
+        <Compile Include="MainPage.xaml.cs"/>
+    </ItemGroup>
+
+</Project>

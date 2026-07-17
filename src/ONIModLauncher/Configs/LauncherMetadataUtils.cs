@@ -4,9 +4,9 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using ONIModLauncher.Common.Configs;
+using ONIModManager.Common.Configs;
 
-namespace ONIModLauncher.Configs
+namespace ONIModManager.Configs
 {
 	public static class LauncherMetadataUtils
 	{

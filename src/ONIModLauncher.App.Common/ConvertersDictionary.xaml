@@ -1,0 +1,8 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:oniModLauncher="clr-namespace:ONIModLauncher.App.Common">
+    <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    <oniModLauncher:InverseBooleanToVisibilityConverter x:Key="InvBoolToVis"/>
+    <oniModLauncher:ColorToBrushConverter x:Key="ColorToBrush"/>
+    <oniModLauncher:PresetColorToBrushConverter x:Key="PresetColorToBrush"/>
+</ResourceDictionary>

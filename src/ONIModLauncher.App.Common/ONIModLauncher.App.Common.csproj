@@ -1,0 +1,61 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <EnableDefaultItems>false</EnableDefaultItems>
+        <DefineSilverlight>true</DefineSilverlight>
+        <RootNamespace>ONIModLauncher.App.Common</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="OpenSilver" Version="3.3.3"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ApplicationDefinition Include="App.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </ApplicationDefinition>
+        <Page Include="ConvertersDictionary.xaml">
+            <Generator>MSBuild:Compile</Generator>
+            <SubType>Designer</SubType>
+        </Page>
+        <Page Include="Theme.xaml">
+            <Generator>MSBuild:Compile</Generator>
+            <SubType>Designer</SubType>
+        </Page>
+        <Page Include="Pages/*.xaml">
+            <Generator>MSBuild:Compile</Generator>
+            <SubType>Designer</SubType>
+        </Page>
+        <Page Include="Controls/*.xaml">
+            <Generator>MSBuild:Compile</Generator>
+            <SubType>Designer</SubType>
+        </Page>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="App.xaml.cs"/>
+        <Compile Include="Converters.cs"/>
+        <Compile Include="Controls/*.xaml.cs">
+            <DependentUpon>%(FileName)</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Include="Pages/*.xaml.cs">
+            <DependentUpon>%(FileName)</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ONIModLauncher.Core\ONIModLauncher.Core.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Resource Include="Assets/*.jpg"/>
+        <Resource Include="Assets/*.png"/>
+        <Resource Include="Assets/*.ttf"/>
+        <Resource Include="Assets/*.otf"/>
+        <Resource Include="Assets/*.ico"/>
+    </ItemGroup>
+
+</Project>

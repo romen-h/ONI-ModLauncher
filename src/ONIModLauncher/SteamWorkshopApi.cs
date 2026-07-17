@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
-namespace ONIModLauncher
+namespace ONIModManager
 {
 	public class SteamWorkshopApi
 	{

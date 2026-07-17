@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 using YamlDotNet.Serialization.NamingConventions;
 using YamlDotNet.Serialization;
 
-namespace ONIModLauncher.Configs
+namespace ONIModManager.Configs
 {
 	public abstract class ConfigBase : INotifyPropertyChanged
 	{

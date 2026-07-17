@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ONIModLauncher
+namespace ONIModManager
 {
 	public static class ShellHelper
 	{

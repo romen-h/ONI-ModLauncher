@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace ONIModLauncher.Configs
+namespace ONIModManager.Configs
 {
     public class ModYaml : YamlConfig<ModYaml>
     {

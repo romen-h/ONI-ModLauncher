@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace ONIModLauncher.Configs
+namespace ONIModManager.Configs
 {
 	[JsonObject(MemberSerialization.OptIn)]
 	public class LauncherSettingsJson : JsonConfig<LauncherSettingsJson>

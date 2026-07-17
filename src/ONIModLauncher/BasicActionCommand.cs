@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace ONIModLauncher
+namespace ONIModManager
 {
-	public class BasicActionCommand : ICommand
+	public class BasicActionCommand
 	{
 		private Func<object, bool> CanExecuteFunc;
 		private Action<object> ExecuteFunc;

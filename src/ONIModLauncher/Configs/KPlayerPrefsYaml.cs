@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace ONIModLauncher.Configs
+namespace ONIModManager.Configs
 {
 	public class KPlayerPrefsYaml : YamlConfig<KPlayerPrefsYaml>
 	{
@@ -21,6 +21,7 @@ namespace ONIModLauncher.Configs
 		private const string FullScreenKey = @"FullScreen";
 		private const string Expansion1EnabledKey = @"EXPANSION1_ID.ENABLED";
 		private const string UIScalePrefKey = @"UIScalePref";
+		private const string DisableAutoModSafeModeKey = @"DisableAutoModSafeMode";
 
 		[YamlMember(Alias = "strings")]
 		public Dictionary<string, string> strings

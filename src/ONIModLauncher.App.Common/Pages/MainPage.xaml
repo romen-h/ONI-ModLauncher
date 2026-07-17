@@ -1,0 +1,28 @@
+﻿<Page x:Class="ONIModLauncher.App.Common.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:ONIModLauncher.App.Common"
+      xmlns:controls="clr-namespace:ONIModLauncher.App.Common.Controls"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      Foreground="Black"
+      Loaded="window_Loaded"
+      Unloaded="window_Closing">
+    <Border Background="{StaticResource DarkBlueBrush}">
+        <Grid Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <controls:LauncherSidebarControl x:Name="sideBar" Grid.Column="0"/>
+
+            <controls:ModListControl x:Name="modsList" Grid.Column="1" Margin="20,0,0,0"/>
+
+            <Rectangle Grid.Column="1" Width="5" Height="5" Fill="{StaticResource LightBlueBrush}" Margin="3" IsHitTestVisible="True"
+                    HorizontalAlignment="Right" VerticalAlignment="Top"
+                    ToolTip="SUPER ULTRA IMPORTANT SECRET SPECIAL TOOLTIP FOR AKI! Sorry this can't make any frost buns or call you beautiful."/>
+        </Grid>
+    </Border>
+</Page>

@@ -17,7 +17,7 @@ using System.Windows.Shapes;
 
 using Microsoft.Win32;
 
-namespace ONIModLauncher
+namespace ONIModManager
 {
 	/// <summary>
 	/// Interaction logic for ModListControl.xaml
@@ -58,7 +58,6 @@ namespace ONIModLauncher
 				return;
 			}
 
-			GongSolutions.Wpf.DragDrop.DragDrop.SetIsDragSource(modsList, Launcher.Instance.IsNotRunning);
 			modListLockScreen.Visibility = (warningAcknowledged || Launcher.Instance.IsNotRunning) ? Visibility.Collapsed : Visibility.Visible;
 			saveModListButton.IsEnabled = Launcher.Instance.IsNotRunning;
 			loadModListButton.IsEnabled = Launcher.Instance.IsNotRunning;

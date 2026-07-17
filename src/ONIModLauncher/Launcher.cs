@@ -7,10 +7,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using ONIModManager.Configs;
 
-using ONIModLauncher.Configs;
-
-namespace ONIModLauncher
+namespace ONIModManager
 {
 	public class Launcher : INotifyPropertyChanged
 	{

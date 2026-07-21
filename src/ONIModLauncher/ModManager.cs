@@ -171,89 +171,95 @@ namespace ONIModLauncher
 				var deserializer = new DeserializerBuilder().IgnoreUnmatchedProperties().Build();
 
 				// Scan dev mods for ones missing from the mods.json
-				foreach (var modFolder in Directory.GetDirectories(GamePaths.DevModsFolder))
-				{
-					try
-					{
-						string folderName = Path.GetFileName(modFolder);
+                if (Directory.Exists(GamePaths.DevModsFolder))
+                {
+                    foreach (var modFolder in Directory.GetDirectories(GamePaths.DevModsFolder))
+                    {
+                        try
+                        {
+                            string folderName = Path.GetFileName(modFolder);
 
-						string modYamlFile = Path.Combine(modFolder, "mod.yaml");
-						string modYaml = File.ReadAllText(modYamlFile);
-						ModYaml modInfo = deserializer.Deserialize<ModYaml>(modYaml);
+                            string modYamlFile = Path.Combine(modFolder, "mod.yaml");
+                            string modYaml = File.ReadAllText(modYamlFile);
+                            ModYaml modInfo = deserializer.Deserialize<ModYaml>(modYaml);
 
-						ONIMod mod = FindMod(modInfo.staticID);
+                            ONIMod mod = FindMod(modInfo.staticID);
 
-						if (mod == null)
-						{
-							ModConfigItem modConfig = new ModConfigItem()
-							{
-								label = new ModConfigLabel()
-								{
-									distribution_platform = DistributionPlatform.Dev,
-									id = folderName,
-									title = modInfo.title,
-									version = folderName.GetHashCode()
-								},
-								status = ModStatus.Installed,
-								enabled = false,
-								enabledForDlc = new List<string>(),
-								crash_count = 0,
-								reinstall_path = null,
-								staticID = modInfo.staticID
-							};
+                            if (mod == null)
+                            {
+                                ModConfigItem modConfig = new ModConfigItem()
+                                {
+                                    label = new ModConfigLabel()
+                                    {
+                                        distribution_platform = DistributionPlatform.Dev,
+                                        id = folderName,
+                                        title = modInfo.title,
+                                        version = folderName.GetHashCode()
+                                    },
+                                    status = ModStatus.Installed,
+                                    enabled = false,
+                                    enabledForDlc = new List<string>(),
+                                    crash_count = 0,
+                                    reinstall_path = null,
+                                    staticID = modInfo.staticID
+                                };
 
-							AddMod(modConfig);
-						}
-					}
-					catch (Exception ex)
-					{
-						Debug.WriteLine(ex.ToString());
-					}
-				}
+                                AddMod(modConfig);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(ex.ToString());
+                        }
+                    }
+                }
 
-				// Scan local mods for ones missing from the mods.json
-				foreach (var modFolder in Directory.GetDirectories(GamePaths.LocalModsFolder))
-				{
-					try
-					{
-						string folderName = Path.GetFileName(modFolder);
+                // Scan local mods for ones missing from the mods.json
+                if (Directory.Exists(GamePaths.LocalModsFolder))
+                {
+                    foreach (var modFolder in Directory.GetDirectories(GamePaths.LocalModsFolder))
+                    {
+                        try
+                        {
+                            string folderName = Path.GetFileName(modFolder);
 
-						string modYamlFile = Path.Combine(modFolder, "mod.yaml");
-						string modYaml = File.ReadAllText(modYamlFile);
-						ModYaml modInfo = deserializer.Deserialize<ModYaml>(modYaml);
+                            string modYamlFile = Path.Combine(modFolder, "mod.yaml");
+                            string modYaml = File.ReadAllText(modYamlFile);
+                            ModYaml modInfo = deserializer.Deserialize<ModYaml>(modYaml);
 
-						ONIMod mod = FindMod(modInfo.staticID);
+                            ONIMod mod = FindMod(modInfo.staticID);
 
-						if (mod == null)
-						{
-							ModConfigItem modConfig = new ModConfigItem()
-							{
-								label = new ModConfigLabel()
-								{
-									distribution_platform = DistributionPlatform.Local,
-									id = folderName,
-									title = modInfo.title,
-									version = folderName.GetHashCode()
-								},
-								status = ModStatus.Installed,
-								enabled = false,
-								enabledForDlc = new List<string>(),
-								crash_count = 0,
-								reinstall_path = null,
-								staticID = modInfo.staticID
-							};
+                            if (mod == null)
+                            {
+                                ModConfigItem modConfig = new ModConfigItem()
+                                {
+                                    label = new ModConfigLabel()
+                                    {
+                                        distribution_platform = DistributionPlatform.Local,
+                                        id = folderName,
+                                        title = modInfo.title,
+                                        version = folderName.GetHashCode()
+                                    },
+                                    status = ModStatus.Installed,
+                                    enabled = false,
+                                    enabledForDlc = new List<string>(),
+                                    crash_count = 0,
+                                    reinstall_path = null,
+                                    staticID = modInfo.staticID
+                                };
 
-							AddMod(modConfig);
-						}
-					}
-					catch (Exception ex)
-					{
-						Debug.WriteLine(ex.ToString());
-					}
-				}
+                                AddMod(modConfig);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(ex.ToString());
+                        }
+                    }
+                }
 
-				// Scan steam mods for ones missing from the mods.json
-				if (SteamIntegration.Instance.UseSteam)
+                // Scan steam mods for ones missing from the mods.json
+				if (SteamIntegration.Instance.UseSteam && Directory.Exists(GamePaths.SteamModsFolder))
 				{
 					foreach (var modFolder in Directory.GetDirectories(GamePaths.SteamModsFolder))
 					{
@@ -704,6 +710,12 @@ namespace ONIModLauncher
 			string sourceModFolder = mod.Folder;
 			string fileSafeStaticID = mod.StaticID.ToFileSafeString();
 			string destModFolder = Path.Combine(GamePaths.LocalModsFolder, fileSafeStaticID);
+
+            if (Directory.Exists(destModFolder))
+            {
+                throw new Exception("Local mod already exists.");
+            }
+			
 			Directory.CreateDirectory(destModFolder);
 			ShellHelper.CopyDirectory(sourceModFolder, destModFolder, true);
 			
@@ -723,8 +735,11 @@ namespace ONIModLauncher
 				enabledForDlc = new List<string>()
 			};
 			
-			AddMod(cloneInfo);
-			SaveModList();
+			ctx.Post((state) =>
+            {
+                AddMod(cloneInfo);
+                SaveModList();
+            }, null);
 		}
 	}
 

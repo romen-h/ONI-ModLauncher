@@ -142,9 +142,12 @@ namespace ONIModLauncher
 			
 			var mod = FindMod(modId);
 			if (mod != null)
-			{
-				RemoveMod(mod);
-			}
+            {
+                ctx.Post((state) =>
+                {
+                    RemoveMod(mod);
+                }, null);
+            }
 
 			ModConfigItem modConfig = new ModConfigItem()
 			{

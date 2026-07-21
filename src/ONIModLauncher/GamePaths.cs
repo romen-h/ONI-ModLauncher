@@ -194,8 +194,8 @@ namespace ONIModLauncher
 			PlayerPrefsFile = Path.Combine(GameDocumentsFolder, ONI_LAUNCH_PREFS_NAME);
 			ModsFolder = Path.Combine(GameDocumentsFolder, "mods");
 			SteamModsFolder = Path.Combine(ModsFolder, "Steam");
-			LocalModsFolder = Path.Combine(ModsFolder, "local");
-			DevModsFolder = Path.Combine(ModsFolder, "dev");
+			LocalModsFolder = Path.Combine(ModsFolder, "Local");
+			DevModsFolder = Path.Combine(ModsFolder, "Dev");
 
 			ModsConfigFile = Path.Combine(ModsFolder, ONI_MODS_CONFIG_NAME);
 

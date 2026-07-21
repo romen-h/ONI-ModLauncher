@@ -125,7 +125,7 @@ namespace ONIModLauncher
 				try
 				{
 					string modFolder = System.IO.Path.Combine(GamePaths.LocalModsFolder, "ModUpdateDate");
-					await ModManager.Instance.InstallModFromURL(ModUpdateUrls.PeterHan_ModUpdater, modFolder, null, "ModUpdateDate");
+					await ModManager.Instance.InstallModFromURL(ModUpdateUrls.PeterHan_ModUpdater, modFolder);
 					Dispatcher.Invoke(() =>
 					{
 						MessageBox.Show(owner, "Mod Updater successfully installed.", "Update Success", MessageBoxButton.OK);
@@ -269,10 +269,23 @@ namespace ONIModLauncher
 		private void ConvertToLocalMenuItem_OnClick(object sender, RoutedEventArgs e)
 		{
 			MenuItem mi = sender as MenuItem;
-			if (mi.DataContext is ONIMod mod)
-			{
-				ModManager.Instance.ConvertToLocal(mod);
-			}
+            if (mi.DataContext is not ONIMod mod) return;
+
+            Window owner = Window.GetWindow(this);
+            try
+            {
+                ModManager.Instance.ConvertToLocal(mod);
+
+                MessageBox.Show(owner, $"{mod.Title} has been converted to a Local mod.", "Convert to Local", MessageBoxButton.OK, MessageBoxImage.Information);
+				
+                CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(modsList.ItemsSource);
+                view.Filter = FilterMethod;
+                view.Refresh();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(owner, $"Failed to convert mod.\n{ex.Message}", "Convert to Local", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
 		}
 
 		private async void UpdateModMenuItem_OnClick(object sender, RoutedEventArgs e)

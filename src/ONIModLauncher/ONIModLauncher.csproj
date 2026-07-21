@@ -22,7 +22,7 @@
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
     <StartupObject>ONIModLauncher.App</StartupObject>
     <RootNamespace>ONIModLauncher</RootNamespace>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>romenh.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
     <ApplicationIcon>Assets/icon.ico</ApplicationIcon>
